@@ -1,0 +1,25 @@
+= form_for @company do |f|
+  - if @company.errors.any?
+    #error_explanation
+      h2 = "#{pluralize(@company.errors.count, "error")} prohibited this company from being saved:"
+      ul
+        - @company.errors.full_messages.each do |message|
+          li = message
+
+  .field
+    = f.label 'Name'
+    = f.text_field :name
+
+  .field
+    = f.label 'Code'
+    = f.text_field :code
+
+  .field
+    = f.label 'Street Address'
+    = f.text_field :str_addr
+
+  .field
+    = f.label 'City'
+    = f.text_field :city
+
+  .actions = f.submit
