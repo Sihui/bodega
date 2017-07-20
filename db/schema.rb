@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20170705102814) do
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "company_id", null: false
-    t.string "role", default: "", null: false
+    t.boolean "admin", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_commitments_on_company_id"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20170705102814) do
   end
 
   create_table "companies", force: :cascade do |t|
-    t.string "name", default: "", null: false
+    t.string "name", null: false
     t.string "code"
     t.string "str_addr"
     t.string "city"
@@ -35,8 +35,8 @@ ActiveRecord::Schema.define(version: 20170705102814) do
 
   create_table "supply_link", id: false, force: :cascade do |t|
     t.integer "supplier_id", null: false
-    t.integer "provider_id", null: false
-    t.index ["provider_id"], name: "index_supply_link_on_provider_id"
+    t.integer "purchaser_id", null: false
+    t.index ["purchaser_id"], name: "index_supply_link_on_purchaser_id"
     t.index ["supplier_id"], name: "index_supply_link_on_supplier_id"
   end
 

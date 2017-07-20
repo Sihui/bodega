@@ -1,10 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe 'company routing', type: :routing do
-  it 'includes #index' do
-    expect(get: '/companies').to route_to('companies#index')
-  end
-
   it 'includes #create' do
     expect(post: '/companies').to route_to('companies#create')
   end

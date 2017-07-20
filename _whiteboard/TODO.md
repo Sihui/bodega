@@ -46,10 +46,32 @@ Project
 * `POST   /reset_password(.:format)      devise/passwords#create`
 * `GET    /sign_up(.:format)             devise/registrations#new`
 * `GET    /user/edit(.:format)           devise/registrations#edit`
-* `GET    /user(.:format)               devise/registrations#show`
-* `PATCH  /user(.:format)               devise/registrations#update`
-* `DELETE /user(.:format)               devise/registrations#destroy`
-* `POST   /user(.:format)               devise/registrations#create`
+* `GET    /user(.:format)                devise/registrations#show`
+* `PATCH  /user(.:format)                devise/registrations#update`
+* `DELETE /user(.:format)                devise/registrations#destroy`
+* `POST   /user(.:format)                devise/registrations#create`
+
+### Commitments
+
+What is the procedure?
+
+* User logs in
+* goes to company page
+* clicks “add members”
+* searches for members (by name or email)
+* selects a user, then confirms
+* hits API endpoint: commitments#create
+* creates unconfirmed commitment with auth-pending user ID
+* notifies user of request (via email and in dashboard)
+* user hits API endpoint: commitments#confirm
+* commitment is created/activated
+
+API endpoint needs to know: company, member, admin?, confirmed? 
+
+* `GET    /companies/:id/members(.:format)      commitments#index`
+* `POST   /companies/:id/members(.:format)      commitments#create`
+* `PATCH  /companies/:id/members/:id(.:format)  commitments#update`
+* `DELETE /companies/:id/members/:id(.:format)  commitments#destroy`
 
 ## Look up later
 

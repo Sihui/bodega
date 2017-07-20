@@ -1,11 +1,20 @@
 FactoryGirl.define do
-  factory :company do
+  factory :company, aliases: [:supplier, :purchaser] do
     name { Faker::Company.name }
-    code 'abc'
+    code { Faker::Internet.user_name }
     str_addr { Faker::Address.street_address }
     city { Faker::Address.city }
 
-    association :supplier, factory: :company
-    association :provider, factory: :company
+    trait :with_supplier do
+      after(:create) do |company, evaluator|
+        create(:supplier, purchasers: [company])
+      end
+    end
+
+    trait :with_purchaser do
+      after(:create) do |company, evaluator|
+        create(:purchaser, suppliers: [company])
+      end
+    end
   end
 end

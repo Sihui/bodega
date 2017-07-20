@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
-  resources :companies, except: :update
+  resources :companies, except: [:update, :index] do
+    resources :commitments
+  end
   patch '/companies/:id', to: 'companies#update'
 
   devise_for :users, path: '', path_names: { registration: :users },
