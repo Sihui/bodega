@@ -10,15 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170705102814) do
+ActiveRecord::Schema.define(version: 20170725055654) do
 
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "company_id", null: false
     t.boolean "admin", default: false, null: false
+    t.boolean "pending_admin_conf", default: true, null: false
+    t.boolean "pending_member_conf", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_commitments_on_company_id"
+    t.index ["user_id", "company_id"], name: "index_commitments_on_user_id_and_company_id", unique: true
     t.index ["user_id"], name: "index_commitments_on_user_id"
   end
 
@@ -33,11 +36,28 @@ ActiveRecord::Schema.define(version: 20170705102814) do
     t.index ["name"], name: "index_companies_on_name", unique: true
   end
 
-  create_table "supply_link", id: false, force: :cascade do |t|
+  create_table "items", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "ref_code"
+    t.integer "price", null: false
+    t.string "unit_size", null: false
+    t.integer "company_id"
+    t.index ["company_id"], name: "index_items_on_company_id"
+    t.index ["name"], name: "index_items_on_name"
+  end
+
+  create_table "supply_link", force: :cascade do |t|
     t.integer "supplier_id", null: false
     t.integer "purchaser_id", null: false
+    t.boolean "pending_supp_conf", default: true, null: false
+    t.boolean "pending_purch_conf", default: true, null: false
     t.index ["purchaser_id"], name: "index_supply_link_on_purchaser_id"
     t.index ["supplier_id"], name: "index_supply_link_on_supplier_id"
+  end
+
+  create_table "supply_links", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

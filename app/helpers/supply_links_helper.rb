@@ -1,0 +1,2 @@
+module SupplyLinksHelper
+end

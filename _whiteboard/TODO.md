@@ -66,7 +66,7 @@ What is the procedure?
 * user hits API endpoint: commitments#confirm
 * commitment is created/activated
 
-API endpoint needs to know: company, member, admin?, confirmed? 
+API endpoint needs to know: `company`, `member`, `admin?`, `member_confirmed?`, `admin_confirmed?`
 
 * `GET    /companies/:id/members(.:format)      commitments#index`
 * `POST   /companies/:id/members(.:format)      commitments#create`

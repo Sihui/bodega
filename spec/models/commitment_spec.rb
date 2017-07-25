@@ -16,4 +16,10 @@ RSpec.describe Commitment, type: :model do
   it 'defaults to not-admin without an admin flag' do
     expect(create(:commitment).admin).to be(false)
   end
+
+  it 'rejects duplicates' do
+    orig = create(:commitment)
+    expect(build(:commitment, user: orig.user, company: orig.company))
+      .not_to be_valid
+  end
 end

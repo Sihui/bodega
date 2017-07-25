@@ -9,9 +9,11 @@ class CreateCompanies < ActiveRecord::Migration[5.1]
       t.timestamps
     end
 
-    create_table :supply_link, id: false do |t|
-      t.belongs_to :supplier,       null: false, index: true
-      t.belongs_to :purchaser,      null: false, index: true
+    create_table :supply_link do |t|
+      t.belongs_to :supplier,  null: false, index: true, foreign_key: true
+      t.belongs_to :purchaser, null: false, index: true, foreign_key: true
+      t.boolean    :pending_supplier_conf,  null: false, default: true
+      t.boolean    :pending_purchaser_conf, null: false, default: true
     end
   end
 end

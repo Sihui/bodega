@@ -58,7 +58,7 @@ describe 'Companies Endpoints', type: :request do
     end
 
     context 'as Company admin' do
-      before { create(:commitment, user: user, company: company, admin: true) }
+      before { company.add_member(user, admin: true) }
 
       it 'shows "Edit" form' do
         get edit_company_path(company)
@@ -81,7 +81,7 @@ describe 'Companies Endpoints', type: :request do
     end
 
     context 'as Company member' do
-      before { create(:commitment, user: user, company: company) }
+      before { company.add_member(user) }
 
       it 'diverts from "Edit" form' do
         get edit_company_path(company)

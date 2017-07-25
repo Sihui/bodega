@@ -8,4 +8,12 @@ class User < ApplicationRecord
 
   has_many :commitments
   has_many :companies, through: :commitments
+
+  def belongs_to?(company)
+    companies.include?(company) && Commitment.between(self, company).confirmed?
+  end
+
+  def is_admin?(company)
+    commitments.any? { |c| c.company == company && c.admin }
+  end
 end
