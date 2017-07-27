@@ -10,10 +10,16 @@ class CreateCompanies < ActiveRecord::Migration[5.1]
     end
 
     create_table :supply_links do |t|
-      t.belongs_to :supplier,  null: false, index: true, foreign_key: true
-      t.belongs_to :purchaser, null: false, index: true, foreign_key: true
-      t.boolean    :pending_supplier_conf,  null: false, default: true
-      t.boolean    :pending_purchaser_conf, null: false, default: true
+      t.belongs_to :supplier,  null: false,
+                               index: true,
+                               foreign_key: { to_table: :companies }
+      t.belongs_to :purchaser, null: false,
+                               index: true,
+                               foreign_key: { to_table: :companies }
+      t.boolean    :pending_supplier_conf,  null: false,
+                                            default: true
+      t.boolean    :pending_purchaser_conf, null: false,
+                                            default: true
     end
   end
 end
