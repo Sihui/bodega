@@ -1,28 +1,33 @@
 require 'rails_helper'
 
 # Routes -----------------------------------------------------------------------
-# POST   /supply_links(.:format)                       supply_links#create
+# POST   /companies/:company_id/supply_links(.:format) supply_links#create
 # PATCH  /supply_links/:id(.:format)                   supply_links#update
 # PUT    /supply_links/:id(.:format)                   supply_links#update
 # DELETE /supply_links/:id(.:format)                   supply_links#destroy
 
 describe 'SupplyLinks Endpoints', type: :request do
-  let :acme  { create(:company) }
-  let :ajax  { create(:company) }
+  let :acme      { create(:company) }
+  let :buynlarge { create(:company) }
+  let :cyberdyne { create(:company).tap { |c| c.add_supplier(acme) } }
+  let :duff      { create(:company).tap { |c| acme.add_supplier(c) } }
+  let :encom     { create(:company).tap { |c| acme.add_supplier(c, pending: :none) } }
   # admin
-  let :alice { create(:user).tap { |u| acme.add_member(u, admin: true) } }
+  let :alice     { create(:user).tap { |u| acme.add_member(u, admin: true) } }
   # member
-  let :bob   { create(:user).tap { |u| acme.add_member(u) } }
+  let :bob       { create(:user).tap { |u| acme.add_member(u) } }
+  # non-member
+  let :carol     { create(:user) }
 
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
-      post supply_links_path
+      post company_supply_links_path(acme)
       expect(response).to redirect_to(new_user_session_path)
 
-      patch supply_link_path(anything)
+      patch company_supply_link_path(acme, anything)
       expect(response).to redirect_to(new_user_session_path)
 
-      delete supply_link_path(anything)
+      delete company_supply_link_path(acme, anything)
       expect(response).to redirect_to(new_user_session_path)
     end
   end
@@ -32,82 +37,128 @@ describe 'SupplyLinks Endpoints', type: :request do
 
     it 'adds new purchasers/suppliers (pending confirmation)' do
       expect do
-        post supply_links_path,
-             params: { supply_link: { supplier: acme, purchaser: ajax } }
+        post company_supply_links_path(acme),
+             params: { supply_link: { supplier_id:  acme.id,
+                                      purchaser_id: buynlarge.id,
+                                      pending_supplier_conf: false } }
       end.to change(SupplyLink, :count).by(1)
-      expect(SupplyLink.between(acme, ajax).confirmed?).to be(false)
+      expect(SupplyLink.between(acme, buynlarge).confirmed?).to be(false)
 
       # What should the user see after adding a company?
       # expect(response).to redirect_to(company_path(company))
     end
 
-  #   it 'cannot confirm member invitations' do
-  #     expect do
-  #       patch commitment_path(Commitment.between(carol, company)),
-  #             params: { commitment: { pending_member_conf: false } }
-  #     end.not_to change { Commitment.between(carol, company).confirmed? }.from(false)
+    it 'confirms pending invitations' do
+      expect do
+        patch company_supply_link_path(acme,
+                                       SupplyLink.between(acme, cyberdyne)),
+              params: { supply_link: { supplier_id:  acme.id,
+                                       purchaser_id: cyberdyne.id,
+                                       pending_supplier_conf: false } }
+      end.to change { SupplyLink.between(acme, cyberdyne).confirmed? }.to(true)
 
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
 
-  #   it 'updates existing members' do
-  #     expect do
-  #       patch commitment_path(Commitment.between(bob, company)),
-  #         params: { commitment: { admin: true } }
-  #     end.to change { Commitment.between(bob, company).admin? }.from(false).to(true)
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
+    it 'cannot re-add existing requests' do
+      cyberdyne     # initialize supply link
 
-  #   it 'deletes other members' do
-  #     bob
+      expect do
+        post company_supply_links_path(acme),
+             params: { supply_link: { supplier_id:  acme.id,
+                                      purchaser_id: cyberdyne.id,
+                                      pending_supplier_conf: false } }
+      end.not_to change(SupplyLink, :count)
+      expect(SupplyLink.between(acme, cyberdyne).confirmed?).to be(false)
 
-  #     expect { delete commitment_path(Commitment.between(bob, company)) }
-  #       .to change(Commitment, :count).by(-1)
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
+
+    it 'cannot confirm requests initiated by own company' do
+      expect do
+        patch company_supply_link_path(acme,
+                                       SupplyLink.between(acme, duff)),
+              params: { supply_link: { supplier_id:  acme.id,
+                                       purchaser_id: duff.id,
+                                       pending_supplier_conf:  false,
+                                       pending_purchaser_conf: false } }
+      end.not_to change { SupplyLink.between(acme, duff).confirmed? }.from(false)
+
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
+
+    it 'cancels pending invitations/requests' do
+      cyberdyne     # initialize supply links
+      duff
+
+      expect do
+        delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+      end.to change(SupplyLink, :count).by(-1)
+
+      expect do
+        delete company_supply_link_path(acme, SupplyLink.between(acme, duff))
+      end.to change(SupplyLink, :count).by(-1)
+
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
   end
 
-  # context 'with a non-admin user' do
-  #   before(:each) { sign_in bob }
+  context 'with a non-admin user' do
+    before(:each) { sign_in bob }
 
-  #   it 'shows index' do
-  #     alice
+    it 'cannot add new purchasers/suppliers' do
+      expect do
+        post company_supply_links_path(acme),
+             params: { supply_link: { supplier_id:  acme.id,
+                                      purchaser_id: buynlarge.id,
+                                      pending_supplier_conf: false } }
+      end.not_to change(SupplyLink, :count)
 
-  #     get company_commitments_path(company)
-  #     expect(response.body).to have_xpath("//a[@href='#{user_path(alice)}']")
-  #     expect(response.body).to have_xpath("//a[@href='#{user_path(bob)}']")
-  #   end
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
 
-  #   it 'adds new members (pending confirmation)' do
-  #     expect do
-  #       post company_commitments_path(company),
-  #            params: { commitment: { user_id: eve.id } }
-  #     end.to change(Commitment, :count).by(1)
-  #     expect(Commitment.between(eve, company).confirmed?).to be(false)
+    it 'cannot confirm pending invitations' do
+      expect do
+        patch company_supply_link_path(acme,
+                                       SupplyLink.between(acme, cyberdyne)),
+              params: { supply_link: { supplier_id:  acme.id,
+                                       purchaser_id: cyberdyne.id,
+                                       pending_supplier_conf: false } }
+      end.not_to change { SupplyLink.between(acme, cyberdyne).confirmed? }
 
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
 
-  #   it 'cannot update existing members' do
-  #     expect do
-  #       patch commitment_path(Commitment.between(bob, company)),
-  #         params: { commitment: { admin: true } }
-  #     end.not_to change { Commitment.between(bob, company).admin? }.from(false)
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
+    it 'cannot cancel pending invitations/requests' do
+      cyberdyne     # initialize supply links
 
-  #   it 'deletes self' do
-  #     expect { delete commitment_path(Commitment.between(bob, company)) }
-  #       .to change(Commitment, :count).by(-1)
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
+      expect do
+        delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+      end.not_to change(SupplyLink, :count)
 
-  #   it 'cannot delete other members' do
-  #     alice
+      # What should the user see after adding a company?
+      # expect(response).to redirect_to(company_path(company))
+    end
+  end
 
-  #     expect { delete commitment_path(Commitment.between(alice, company)) }
-  #       .not_to change(Commitment, :count)
-  #     expect(response).to redirect_to(company_path(company))
-  #   end
-  # end
+  context 'with non-member user' do
+    before(:each) { sign_in carol }
+
+    it 'always redirects to company page' do
+      post company_supply_links_path(acme)
+      expect(response).to redirect_to(company_path(acme))
+
+      patch company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+      expect(response).to redirect_to(company_path(acme))
+
+      delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+      expect(response).to redirect_to(company_path(acme))
+    end
+  end
 end

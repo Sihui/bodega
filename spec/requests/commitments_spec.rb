@@ -70,7 +70,7 @@ describe 'Commitments Endpoints', type: :request do
       expect do
         patch commitment_path(Commitment.between(bob, company)),
           params: { commitment: { admin: true } }
-      end.to change { Commitment.between(bob, company).admin? }.from(false).to(true)
+      end.to change { Commitment.between(bob, company).admin? }.to(true)
       expect(response).to redirect_to(company_path(company))
     end
 
@@ -148,7 +148,7 @@ describe 'Commitments Endpoints', type: :request do
         patch commitment_path(Commitment.between(carol, company)),
               params: { commitment: { user_id: carol.id,
                                       pending_member_conf: false } }
-      end.to change { Commitment.between(carol, company).confirmed? }.from(false).to(true)
+      end.to change { Commitment.between(carol, company).confirmed? }.to(true)
 
       expect(response).to redirect_to(company_path(company))
     end

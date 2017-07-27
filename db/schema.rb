@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170725055654) do
+ActiveRecord::Schema.define(version: 20170725024256) do
 
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -46,18 +46,13 @@ ActiveRecord::Schema.define(version: 20170725055654) do
     t.index ["name"], name: "index_items_on_name"
   end
 
-  create_table "supply_link", force: :cascade do |t|
+  create_table "supply_links", force: :cascade do |t|
     t.integer "supplier_id", null: false
     t.integer "purchaser_id", null: false
-    t.boolean "pending_supp_conf", default: true, null: false
-    t.boolean "pending_purch_conf", default: true, null: false
-    t.index ["purchaser_id"], name: "index_supply_link_on_purchaser_id"
-    t.index ["supplier_id"], name: "index_supply_link_on_supplier_id"
-  end
-
-  create_table "supply_links", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.boolean "pending_supplier_conf", default: true, null: false
+    t.boolean "pending_purchaser_conf", default: true, null: false
+    t.index ["purchaser_id"], name: "index_supply_links_on_purchaser_id"
+    t.index ["supplier_id"], name: "index_supply_links_on_supplier_id"
   end
 
   create_table "users", force: :cascade do |t|

@@ -1,15 +1,9 @@
 Rails.application.routes.draw do
-  get 'supply_links/create'
-
-  get 'supply_links/update'
-
-  get 'supply_links/destroy'
-
   # Main Resources -------------------------------------------------------------
-  resources :companies, except: [:index], shallow: true do
-    resources :commitments, except: [:new, :edit, :show]
+  resources :companies, except: [:index] do
+    resources :commitments, except: [:new, :edit, :show], shallow: true
+    resources :supply_links, only: [:create, :update, :destroy]
   end
-  resources :supply_links, only: [:create, :update, :destroy]
 
   # Authentication -------------------------------------------------------------
   devise_for :users, path: '', path_names: { registration: :users },

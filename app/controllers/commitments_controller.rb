@@ -1,7 +1,7 @@
 class CommitmentsController < ApplicationController
-  before_action :set_commitment, only: [:update, :destroy]
-  before_action :set_company
   before_action :authenticate_user!
+  before_action :set_vars
+  before_action :authorize_action, except: :index
 
   def index
     redirect_to company_path(@company) and return unless current_user.belongs_to?(@company)
@@ -10,7 +10,6 @@ class CommitmentsController < ApplicationController
 
   def create
     @commitment = Commitment.new(commitment_params)
-    redirect_to company_path(@company) and return unless authorized_user?
 
     respond_to do |format|
       if @commitment.save
@@ -24,7 +23,6 @@ class CommitmentsController < ApplicationController
   end
 
   def update
-    redirect_to company_path(@company) and return unless authorized_user?
     respond_to do |format|
       if @commitment.update_attributes(commitment_params)
         format.html { redirect_to @company, notice: 'Commitment was successfully updated.' }
@@ -37,7 +35,6 @@ class CommitmentsController < ApplicationController
   end
 
   def destroy
-    redirect_to company_path(@company) and return unless authorized_user?
     @commitment.destroy
     respond_to do |format|
       format.html { redirect_to company_path(@company), notice: 'Commitment was successfully destroyed.' }
@@ -47,12 +44,20 @@ class CommitmentsController < ApplicationController
 
   private
 
-    def set_company
-      @company = params[:company_id] ? Company.find(params[:company_id]) : @commitment.company
+    def set_vars
+      @commitment = Commitment.find(params[:id]) if params.key?(:id)
+      @company = @commitment&.company || Company.find(params[:company_id])
     end
 
-    def set_commitment
-      @commitment = Commitment.find(params[:id])
+    def authorize_action
+      unless current_user.is_admin?(@company) || current_user_is_target?
+        redirect_to company_path(@company) and return 
+      end
+    end
+
+    def current_user_is_target?
+      current_user == (Commitment.find_by(id: params[:id])&.user ||
+        User.find_by(id: params.dig(:commitment, :user_id)))
     end
 
     def commitment_params
@@ -64,14 +69,5 @@ class CommitmentsController < ApplicationController
           p.merge!(params[:commitment].permit(:pending_member_conf)) \
             if current_user_is_target?
         end
-    end
-
-    def authorized_user?
-      current_user.is_admin?(@company) || current_user_is_target?
-    end
-    
-    def current_user_is_target?
-      current_user == (Commitment.find_by(id: params[:id])&.user ||
-        User.find_by(id: params.dig(:commitment, :user_id)))
     end
 end
