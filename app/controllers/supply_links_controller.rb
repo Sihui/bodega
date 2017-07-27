@@ -61,7 +61,7 @@ class SupplyLinksController < ApplicationController
 
     # returns an array of symbols, e.g. [:supplier, :purchaser]
     def represented_roles
-      SupplyLink.roles.select { |role| current_user.is_admin?(send(role)) }
+      SupplyLink.confirmers.select { |role| current_user.is_admin?(send(role)) }
     end
 
     # returns an array of Company objects

@@ -1,8 +1,9 @@
 class Company < ApplicationRecord
   validates :name, presence: :true
-  has_and_belongs_to_many :purchasers, through: :supply_links
-  has_and_belongs_to_many :suppliers, through: :supply_links
-  has_many :commitments
+  has_many :purchasers, through: :supply_links
+  has_many :suppliers, through: :supply_links
+  before_destroy :destroy_dependent_supply_links
+  has_many :commitments, dependent: :destroy
   has_many :users, through: :commitments
 
   def admin?(user)
@@ -26,4 +27,10 @@ class Company < ApplicationRecord
     SupplyLink.create(supplier: self, purchaser: purchaser)
       .confirm!(pending: pending)
   end
+
+  private
+
+    def destroy_dependent_supply_links
+      SupplyLink.where('supplier_id = ? OR purchaser_id = ?', id, id).each(&:destroy)
+    end
 end

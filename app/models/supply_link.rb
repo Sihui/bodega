@@ -1,6 +1,5 @@
 class SupplyLink < ApplicationRecord
   include Confirmable
-  cattr_reader :roles, instance_reader: false do [:purchaser, :supplier] end
 
   validates :purchaser_id, uniqueness: { scope: :supplier_id }
   belongs_to :purchaser, class_name: 'Company'
