@@ -1,8 +1,13 @@
 class Company < ApplicationRecord
   validates :name, presence: :true
+  has_many :purchaser_links, class_name:  :SupplyLink,
+                             foreign_key: :supplier_id,
+                             dependent:   :destroy
+  has_many :supplier_links,  class_name:  :SupplyLink,
+                             foreign_key: :purchaser_id,
+                             dependent:   :destroy
   has_many :purchasers, through: :supply_links
-  has_many :suppliers, through: :supply_links
-  before_destroy :destroy_dependent_supply_links
+  has_many :suppliers,  through: :supply_links
   has_many :commitments, dependent: :destroy
   has_many :users, through: :commitments
 
@@ -28,9 +33,7 @@ class Company < ApplicationRecord
       .confirm!(pending: pending)
   end
 
-  private
-
-    def destroy_dependent_supply_links
-      SupplyLink.where('supplier_id = ? OR purchaser_id = ?', id, id).each(&:destroy)
-    end
+  def supply_links
+    purchaser_links + supplier_links
+  end
 end
