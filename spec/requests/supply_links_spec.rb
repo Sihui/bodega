@@ -18,6 +18,9 @@ describe 'SupplyLinks Endpoints', type: :request do
   let :bob       { create(:user).tap { |u| acme.add_member(u) } }
   # non-member
   let :carol     { create(:user) }
+  # dual-admin
+  let :david     { create(:user).tap { |u| acme.add_member(u, admin: true)
+                                           buynlarge.add_member(u, admin: true) } }
 
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
@@ -147,7 +150,7 @@ describe 'SupplyLinks Endpoints', type: :request do
     end
   end
 
-  context 'with non-member user' do
+  context 'with a non-member user' do
     before(:each) { sign_in carol }
 
     it 'always redirects to company page' do
@@ -159,6 +162,21 @@ describe 'SupplyLinks Endpoints', type: :request do
 
       delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
       expect(response).to redirect_to(company_path(acme))
+    end
+  end
+
+  context 'with an admin of both companies' do
+    before(:each) { sign_in david }
+
+    it 'always redirects to company page' do
+      expect do
+        post company_supply_links_path(acme),
+             params: { supply_link: { supplier_id:  acme.id,
+                                      purchaser_id: buynlarge.id,
+                                      pending_supplier_conf: false,
+                                      pending_purchaser_conf: false } }
+      end.to change(SupplyLink, :count).by(1)
+      expect(SupplyLink.between(acme, buynlarge).confirmed?).to be(true)
     end
   end
 end
