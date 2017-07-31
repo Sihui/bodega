@@ -11,21 +11,9 @@ require 'rails_helper'
 # DELETE /companies/:company_id/items/:id(.:format)        items#destroy
 
 describe 'Items Endpoints', type: :request do
-  let :acme      { create(:company) }
-  let :buynlarge { create(:company) }
-  let :cyberdyne { create(:company).tap { |c| acme.add_supplier(c, pending: :none) } }
-  let :duff      { create(:company).tap { |c| acme.add_purchaser(c, pending: :none) } }
-  # own company admin
-  let :alice     { create(:user).tap { |u| acme.add_member(u, admin: true) } }
-  # unaffiliated user
-  let :bob       { create(:user).tap { |u| buynlarge.add_member(u) } }
-  # supplier member
-  let :carol     { create(:user).tap { |u| cyberdyne.add_member(u) } }
-  # purchaser member
-  let :david     { create(:user).tap { |u| duff.add_member(u) } }
-  # own company member
-  let :eve       { create(:user).tap { |u| acme.add_member(u) } }
-  let :inventory { Array.new(20) { |i| create(:item, company: acme, name: i.to_s + Faker::Food.dish) } }
+  let :inventory do
+    Array.new(20) { |i| create(:item, company: acme, name: i.to_s + Faker::Food.dish) }
+  end
 
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
@@ -111,110 +99,8 @@ describe 'Items Endpoints', type: :request do
     end
   end
 
-  context 'with an unaffiliated user' do
-    before(:each) { sign_in bob }
-
-    it 'diverts from the index' do
-      get company_items_path(acme)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'cannot add new inventory items' do
-      expect do
-        post company_items_path(acme),
-             params: { item: { name: 'Aioli',
-                               ref_code: 'AIOL',
-                               price: 350,
-                               unit_size: '2kg' } }
-      end.not_to change(Item, :count)
-    end
-
-    it 'diverts from new inventory item form' do
-      get new_company_item_path(acme)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'diverts from edit inventory item form' do
-      get edit_company_item_path(acme, inventory.first)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'diverts from item information' do
-      get company_item_path(acme, inventory.first)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'cannot update existing inventory items' do
-      expect do
-        patch company_item_path(acme, inventory.first),
-               params: { item: { name: 'Aioli',
-                                 ref_code: 'AIOL',
-                                 price: 350,
-                                 unit_size: '2kg' } }
-      end.not_to change { inventory.first.reload }
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'cannot delete existing inventory items' do
-      inventory
-      expect { delete company_item_path(acme, inventory.first) }
-        .not_to change(Item, :count)
-    end
-  end
-
-  context 'with a member of a supplier' do
-    before(:each) { sign_in carol }
-
-    it 'diverts from the index' do
-      get company_items_path(acme)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'cannot add new inventory items' do
-      expect do
-        post company_items_path(acme),
-             params: { item: { name: 'Aioli',
-                               ref_code: 'AIOL',
-                               price: 350,
-                               unit_size: '2kg' } }
-      end.not_to change(Item, :count)
-    end
-
-    it 'diverts from new inventory item form' do
-      get new_company_item_path(acme)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'diverts from edit inventory item form' do
-      get edit_company_item_path(acme, inventory.first)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'diverts from item information' do
-      get company_item_path(acme, inventory.first)
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'cannot update existing inventory items' do
-      expect do
-        patch company_item_path(acme, inventory.first),
-               params: { item: { name: 'Aioli',
-                                 ref_code: 'AIOL',
-                                 price: 350,
-                                 unit_size: '2kg' } }
-      end.not_to change { inventory.first.reload }
-      expect(response.body).to redirect_to(company_path(acme))
-    end
-
-    it 'cannot delete existing inventory items' do
-      inventory
-      expect { delete company_item_path(acme, inventory.first) }
-        .not_to change(Item, :count)
-    end
-  end
-
-  context 'with a member of a purchaser' do
-    before(:each) { sign_in david }
+  context 'with own company member' do
+    before(:each) { sign_in arthur }
 
     it 'displays the index' do
       inventory
@@ -267,8 +153,110 @@ describe 'Items Endpoints', type: :request do
     end
   end
 
-  context 'with own company member' do
-    before(:each) { sign_in eve }
+  context 'with an unaffiliated user' do
+    before(:each) { sign_in zack }
+
+    it 'diverts from the index' do
+      get company_items_path(acme)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'cannot add new inventory items' do
+      expect do
+        post company_items_path(acme),
+             params: { item: { name: 'Aioli',
+                               ref_code: 'AIOL',
+                               price: 350,
+                               unit_size: '2kg' } }
+      end.not_to change(Item, :count)
+    end
+
+    it 'diverts from new inventory item form' do
+      get new_company_item_path(acme)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'diverts from edit inventory item form' do
+      get edit_company_item_path(acme, inventory.first)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'diverts from item information' do
+      get company_item_path(acme, inventory.first)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'cannot update existing inventory items' do
+      expect do
+        patch company_item_path(acme, inventory.first),
+               params: { item: { name: 'Aioli',
+                                 ref_code: 'AIOL',
+                                 price: 350,
+                                 unit_size: '2kg' } }
+      end.not_to change { inventory.first.reload }
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'cannot delete existing inventory items' do
+      inventory
+      expect { delete company_item_path(acme, inventory.first) }
+        .not_to change(Item, :count)
+    end
+  end
+
+  context 'with a member of a supplier' do
+    before(:each) { sign_in bob }
+
+    it 'diverts from the index' do
+      get company_items_path(acme)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'cannot add new inventory items' do
+      expect do
+        post company_items_path(acme),
+             params: { item: { name: 'Aioli',
+                               ref_code: 'AIOL',
+                               price: 350,
+                               unit_size: '2kg' } }
+      end.not_to change(Item, :count)
+    end
+
+    it 'diverts from new inventory item form' do
+      get new_company_item_path(acme)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'diverts from edit inventory item form' do
+      get edit_company_item_path(acme, inventory.first)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'diverts from item information' do
+      get company_item_path(acme, inventory.first)
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'cannot update existing inventory items' do
+      expect do
+        patch company_item_path(acme, inventory.first),
+               params: { item: { name: 'Aioli',
+                                 ref_code: 'AIOL',
+                                 price: 350,
+                                 unit_size: '2kg' } }
+      end.not_to change { inventory.first.reload }
+      expect(response.body).to redirect_to(company_path(acme))
+    end
+
+    it 'cannot delete existing inventory items' do
+      inventory
+      expect { delete company_item_path(acme, inventory.first) }
+        .not_to change(Item, :count)
+    end
+  end
+
+  context 'with a member of a purchaser' do
+    before(:each) { sign_in carol }
 
     it 'displays the index' do
       inventory

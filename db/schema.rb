@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727090007) do
+ActiveRecord::Schema.define(version: 20170731061032) do
 
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -41,12 +41,35 @@ ActiveRecord::Schema.define(version: 20170727090007) do
     t.string "ref_code"
     t.integer "price", null: false
     t.string "unit_size", null: false
-    t.integer "company_id"
+    t.integer "supplier_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["company_id"], name: "index_items_on_company_id"
-    t.index ["name", "company_id"], name: "index_items_on_name_and_company_id", unique: true
-    t.index ["ref_code", "company_id"], name: "index_items_on_ref_code_and_company_id", unique: true
+    t.index ["name", "supplier_id"], name: "index_items_on_name_and_supplier_id", unique: true
+    t.index ["ref_code", "supplier_id"], name: "index_items_on_ref_code_and_supplier_id", unique: true
+    t.index ["supplier_id"], name: "index_items_on_supplier_id"
+  end
+
+  create_table "order_items", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.integer "item_id", null: false
+    t.integer "qty", default: 1, null: false
+    t.integer "price", null: false
+    t.integer "total", null: false
+    t.index ["item_id"], name: "index_order_items_on_item_id"
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "supplier_id", null: false
+    t.integer "purchaser_id", null: false
+    t.integer "discount"
+    t.string "discount_type"
+    t.string "invoice", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["purchaser_id"], name: "index_orders_on_purchaser_id"
+    t.index ["supplier_id"], name: "index_orders_on_supplier_id"
+    t.index [nil, "invoice"], name: "index_orders_on_supplier_and_invoice", unique: true
   end
 
   create_table "supply_links", force: :cascade do |t|

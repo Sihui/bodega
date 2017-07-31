@@ -5,25 +5,31 @@ RSpec.describe Company do
     expect(create(:company)).to be_valid
   end
 
-  it 'requires a name' do
-    expect(build(:company, name: nil)).not_to be_valid
+  describe 'attribute validation' do
+    it 'requires a name' do
+      expect(build(:company, name: nil)).not_to be_valid
+    end
+  end
+
+  describe 'association methods' do
+    it 'has #admin?' do
+    end
   end
 
   describe 'supports supplier-purchaser relationships' do
-    let :purch { create(:company, :with_supplier) }
-    let :suppl { create(:company, :with_purchaser) }
-
     it 'automatically becomes a supplier’s purchaser' do
-      expect(purch.suppliers.map(&:purchasers).flatten).to include(purch)
+      # acme.add_supplier(buynlarge)
+      expect(buynlarge.purchasers).to include(acme)
     end
 
     it 'automatically becomes a purchaser’s supplier' do
-      expect(suppl.purchasers.map(&:suppliers).flatten).to include(suppl)
+      # acme.add_purchaser(cyberdyne)
+      expect(cyberdyne.suppliers).to include(acme)
     end
 
     it 'prevents redundant relations' do
-      suppliers = purch.suppliers
-      expect { suppliers << suppliers.first }.not_to change { suppliers.count }
+      buynlarge # initiate supply link
+      expect { acme.add_supplier(buynlarge) }.not_to change { acme.suppliers.count }
     end
   end
 end

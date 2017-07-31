@@ -8,24 +8,12 @@ require 'rails_helper'
 # DELETE /commitments/:id(.:format)                   commitments#destroy
 
 describe 'Commitments Endpoints', type: :request do
-  let :company { create(:company) }
-  # admin
-  let :alice   { create(:user).tap { |u| company.add_member(u, admin: true) } }
-  # member
-  let :bob     { create(:user).tap { |u| company.add_member(u) } }
-  # non-member (with invitation)
-  let :carol   { create(:user).tap { |u| company.add_member(u, pending: :member) } }
-  # non-member (with open request)
-  let :david   { create(:user).tap { |u| company.add_member(u, pending: :admin) } }
-  # non-member
-  let :eve     { create(:user) }
-
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
-      get company_commitments_path(company)
+      get company_commitments_path(acme)
       expect(response).to redirect_to(new_user_session_path)
 
-      post company_commitments_path(company)
+      post company_commitments_path(acme)
       expect(response).to redirect_to(new_user_session_path)
 
       patch commitment_path(alice.commitments.first)
@@ -40,203 +28,203 @@ describe 'Commitments Endpoints', type: :request do
     before(:each) { sign_in alice }
 
     it 'shows index' do
-      bob
+      arthur
 
-      get company_commitments_path(company)
+      get company_commitments_path(acme)
       expect(response.body).to have_xpath("//a[@href='#{user_path(alice)}']")
-      expect(response.body).to have_xpath("//a[@href='#{user_path(bob)}']")
+      expect(response.body).to have_xpath("//a[@href='#{user_path(arthur)}']")
     end
 
     it 'adds new members (pending confirmation)' do
       expect do
-        post company_commitments_path(company),
-             params: { commitment: { user_id: eve.id } }
+        post company_commitments_path(acme),
+             params: { commitment: { user_id: zack.id } }
       end.to change(Commitment, :count).by(1)
-      expect(Commitment.between(eve, company).confirmed?).to be(false)
+      expect(Commitment.between(zack, acme).confirmed?).to be(false)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'cannot confirm member invitations' do
       expect do
-        patch commitment_path(Commitment.between(carol, company)),
+        patch commitment_path(Commitment.between(andrew, acme)),
               params: { commitment: { pending_member_conf: false } }
-      end.not_to change { Commitment.between(carol, company).confirmed? }.from(false)
+      end.not_to change { Commitment.between(andrew, acme).confirmed? }.from(false)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'updates existing members' do
       expect do
-        patch commitment_path(Commitment.between(bob, company)),
+        patch commitment_path(Commitment.between(arthur, acme)),
           params: { commitment: { admin: true } }
-      end.to change { Commitment.between(bob, company).admin? }.to(true)
-      expect(response).to redirect_to(company_path(company))
+      end.to change { Commitment.between(arthur, acme).admin? }.to(true)
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'deletes other members' do
-      bob
+      arthur
 
-      expect { delete commitment_path(Commitment.between(bob, company)) }
+      expect { delete commitment_path(Commitment.between(arthur, acme)) }
         .to change(Commitment, :count).by(-1)
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'with a non-admin user' do
-    before(:each) { sign_in bob }
+    before(:each) { sign_in arthur }
 
     it 'shows index' do
       alice
 
-      get company_commitments_path(company)
+      get company_commitments_path(acme)
       expect(response.body).to have_xpath("//a[@href='#{user_path(alice)}']")
-      expect(response.body).to have_xpath("//a[@href='#{user_path(bob)}']")
+      expect(response.body).to have_xpath("//a[@href='#{user_path(arthur)}']")
     end
 
     it 'cannot add new members' do
       expect do
-        post company_commitments_path(company),
-             params: { commitment: { user_id: eve.id } }
+        post company_commitments_path(acme),
+             params: { commitment: { user_id: zack.id } }
       end.not_to change(Commitment, :count)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'cannot update existing members' do
       expect do
-        patch commitment_path(Commitment.between(bob, company)),
+        patch commitment_path(Commitment.between(arthur, acme)),
           params: { commitment: { admin: true } }
-      end.not_to change { Commitment.between(bob, company).admin? }.from(false)
-      expect(response).to redirect_to(company_path(company))
+      end.not_to change { Commitment.between(arthur, acme).admin? }.from(false)
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'deletes self' do
-      expect { delete commitment_path(Commitment.between(bob, company)) }
+      expect { delete commitment_path(Commitment.between(arthur, acme)) }
         .to change(Commitment, :count).by(-1)
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'cannot delete other members' do
       alice
 
-      expect { delete commitment_path(Commitment.between(alice, company)) }
+      expect { delete commitment_path(Commitment.between(alice, acme)) }
         .not_to change(Commitment, :count)
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'with a non-member, invited user' do
-    before(:each) { sign_in carol }
+    before(:each) { sign_in andrew }
 
     it 'diverts from the index' do
-      get company_commitments_path(company)
-      expect(response).to redirect_to(company_path(company))
+      get company_commitments_path(acme)
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'does not create a duplicate commitment' do
       expect do
-        post company_commitments_path(company),
-             params: { commitment: { user_id: carol.id } }
+        post company_commitments_path(acme),
+             params: { commitment: { user_id: andrew.id } }
       end.not_to change(Commitment, :count)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'confirms invitation to join company' do
       expect do
-        patch commitment_path(Commitment.between(carol, company)),
-              params: { commitment: { user_id: carol.id,
+        patch commitment_path(Commitment.between(andrew, acme)),
+              params: { commitment: { user_id: andrew.id,
                                       pending_member_conf: false } }
-      end.to change { Commitment.between(carol, company).confirmed? }.to(true)
+      end.to change { Commitment.between(andrew, acme).confirmed? }.to(true)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'cancels invitation to join company' do
-      expect { delete commitment_path(Commitment.between(carol, company)) }
+      expect { delete commitment_path(Commitment.between(andrew, acme)) }
         .to change(Commitment, :count).by(-1)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'diverts from adding other users to company' do
       expect do
-        post company_commitments_path(company),
-             params: { commitment: { user_id: eve.id } }
+        post company_commitments_path(acme),
+             params: { commitment: { user_id: zack.id } }
       end.not_to change(Commitment, :count)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
-    it 'diverts from admin-level changes' do
-      bob
+    it 'diverts from admin-lzackl changes' do
+      arthur
 
       expect do
-        patch commitment_path(Commitment.between(bob, company)),
+        patch commitment_path(Commitment.between(arthur, acme)),
               params: { commitment: { admin: true } }
-      end.not_to change { Commitment.between(bob, company).admin? }.from(false)
+      end.not_to change { Commitment.between(arthur, acme).admin? }.from(false)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'diverts from deleting other users’ memberships' do
-      bob
+      arthur
 
       expect do
-        delete commitment_path(Commitment.between(bob, company))
+        delete commitment_path(Commitment.between(arthur, acme))
       end.not_to change(Commitment, :count)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'with a non-member, requested user' do
-    before(:each) { sign_in david }
+    before(:each) { sign_in amelia }
 
     it 'diverts from the index' do
-      get company_commitments_path(company)
-      expect(response).to redirect_to(company_path(company))
+      get company_commitments_path(acme)
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'does nothing if already has open request' do
       expect do
-        post company_commitments_path(company),
-             params: { commitment: { user_id: david.id } }
+        post company_commitments_path(acme),
+             params: { commitment: { user_id: amelia.id } }
       end.not_to change(Commitment, :count)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'cancels request to join company' do
-      expect { delete commitment_path(Commitment.between(david, company)) }
+      expect { delete commitment_path(Commitment.between(amelia, acme)) }
         .to change(Commitment, :count).by(-1)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'with a non-member user' do
-    before(:each) { sign_in eve }
+    before(:each) { sign_in zack }
 
     it 'diverts from modifying other users’ memberships' do
-      company.add_member(david, pending: :member)
+      acme.add_member(amelia, pending: :member)
       expect do
-        patch commitment_path(Commitment.between(david, company)),
+        patch commitment_path(Commitment.between(amelia, acme)),
               params: { commitment: { pending_member_conf: false } }
-      end.not_to change { Commitment.between(david, company).confirmed? }.from(false)
+      end.not_to change { Commitment.between(amelia, acme).confirmed? }.from(false)
 
-      expect(response).to redirect_to(company_path(company))
+      expect(response).to redirect_to(company_path(acme))
     end
 
     it 'initiates request to join company' do
       expect do
-        post company_commitments_path(company),
-             params: { commitment: { user_id: eve.id } }
+        post company_commitments_path(acme),
+             params: { commitment: { user_id: zack.id } }
       end.to change(Commitment, :count).by(1)
 
-      expect(Commitment.between(eve, company).confirmed?).to be(false)
-      expect(response).to redirect_to(company_path(company))
+      expect(Commitment.between(zack, acme).confirmed?).to be(false)
+      expect(response).to redirect_to(company_path(acme))
     end
   end
 end

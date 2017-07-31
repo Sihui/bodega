@@ -7,6 +7,6 @@ FactoryGirl.define do
     end
     price { (rand(40) + 20) * 10 }
     unit_size { Faker::Food.measurement }
-    company
+    association :supplier, factory: :company
   end
 end

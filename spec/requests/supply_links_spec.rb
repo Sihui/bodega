@@ -7,21 +7,6 @@ require 'rails_helper'
 # DELETE /supply_links/:id(.:format)                   supply_links#destroy
 
 describe 'SupplyLinks Endpoints', type: :request do
-  let :acme      { create(:company) }
-  let :buynlarge { create(:company) }
-  let :cyberdyne { create(:company).tap { |c| c.add_supplier(acme) } }
-  let :duff      { create(:company).tap { |c| acme.add_supplier(c) } }
-  let :encom     { create(:company).tap { |c| acme.add_supplier(c, pending: :none) } }
-  # admin
-  let :alice     { create(:user).tap { |u| acme.add_member(u, admin: true) } }
-  # member
-  let :bob       { create(:user).tap { |u| acme.add_member(u) } }
-  # non-member
-  let :carol     { create(:user) }
-  # dual-admin
-  let :david     { create(:user).tap { |u| acme.add_member(u, admin: true)
-                                           buynlarge.add_member(u, admin: true) } }
-
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       post company_supply_links_path(acme)
@@ -42,10 +27,10 @@ describe 'SupplyLinks Endpoints', type: :request do
       expect do
         post company_supply_links_path(acme),
              params: { supply_link: { supplier_id:  acme.id,
-                                      purchaser_id: buynlarge.id,
+                                      purchaser_id: zorg.id,
                                       pending_supplier_conf: false } }
       end.to change(SupplyLink, :count).by(1)
-      expect(SupplyLink.between(acme, buynlarge).confirmed?).to be(false)
+      expect(SupplyLink.between(acme, zorg).confirmed?).to be(false)
 
       # What should the user see after adding a company?
       # expect(response).to redirect_to(company_path(company))
@@ -54,26 +39,26 @@ describe 'SupplyLinks Endpoints', type: :request do
     it 'confirms pending invitations' do
       expect do
         patch company_supply_link_path(acme,
-                                       SupplyLink.between(acme, cyberdyne)),
+                                       SupplyLink.between(acme, cogswell)),
               params: { supply_link: { supplier_id:  acme.id,
-                                       purchaser_id: cyberdyne.id,
+                                       purchaser_id: cogswell.id,
                                        pending_supplier_conf: false } }
-      end.to change { SupplyLink.between(acme, cyberdyne).confirmed? }.to(true)
+      end.to change { SupplyLink.between(acme, cogswell).confirmed? }.to(true)
 
       # What should the user see after adding a company?
       # expect(response).to redirect_to(company_path(company))
     end
 
     it 'cannot re-add existing requests' do
-      cyberdyne     # initialize supply link
+      cogswell     # initialize supply link
 
       expect do
         post company_supply_links_path(acme),
              params: { supply_link: { supplier_id:  acme.id,
-                                      purchaser_id: cyberdyne.id,
+                                      purchaser_id: cogswell.id,
                                       pending_supplier_conf: false } }
       end.not_to change(SupplyLink, :count)
-      expect(SupplyLink.between(acme, cyberdyne).confirmed?).to be(false)
+      expect(SupplyLink.between(acme, cogswell).confirmed?).to be(false)
 
       # What should the user see after adding a company?
       # expect(response).to redirect_to(company_path(company))
@@ -82,27 +67,27 @@ describe 'SupplyLinks Endpoints', type: :request do
     it 'cannot confirm requests initiated by own company' do
       expect do
         patch company_supply_link_path(acme,
-                                       SupplyLink.between(acme, duff)),
+                                       SupplyLink.between(acme, bluthco)),
               params: { supply_link: { supplier_id:  acme.id,
-                                       purchaser_id: duff.id,
+                                       purchaser_id: bluthco.id,
                                        pending_supplier_conf:  false,
                                        pending_purchaser_conf: false } }
-      end.not_to change { SupplyLink.between(acme, duff).confirmed? }.from(false)
+      end.not_to change { SupplyLink.between(acme, bluthco).confirmed? }.from(false)
 
       # What should the user see after adding a company?
       # expect(response).to redirect_to(company_path(company))
     end
 
     it 'cancels pending invitations/requests' do
-      cyberdyne     # initialize supply links
-      duff
+      cogswell     # initialize supply links
+      bluthco
 
       expect do
-        delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+        delete company_supply_link_path(acme, SupplyLink.between(acme, cogswell))
       end.to change(SupplyLink, :count).by(-1)
 
       expect do
-        delete company_supply_link_path(acme, SupplyLink.between(acme, duff))
+        delete company_supply_link_path(acme, SupplyLink.between(acme, bluthco))
       end.to change(SupplyLink, :count).by(-1)
 
       # What should the user see after adding a company?
@@ -111,13 +96,13 @@ describe 'SupplyLinks Endpoints', type: :request do
   end
 
   context 'with a non-admin user' do
-    before(:each) { sign_in bob }
+    before(:each) { sign_in arthur }
 
     it 'cannot add new purchasers/suppliers' do
       expect do
         post company_supply_links_path(acme),
              params: { supply_link: { supplier_id:  acme.id,
-                                      purchaser_id: buynlarge.id,
+                                      purchaser_id: zorg.id,
                                       pending_supplier_conf: false } }
       end.not_to change(SupplyLink, :count)
 
@@ -128,21 +113,21 @@ describe 'SupplyLinks Endpoints', type: :request do
     it 'cannot confirm pending invitations' do
       expect do
         patch company_supply_link_path(acme,
-                                       SupplyLink.between(acme, cyberdyne)),
+                                       SupplyLink.between(acme, cogswell)),
               params: { supply_link: { supplier_id:  acme.id,
-                                       purchaser_id: cyberdyne.id,
+                                       purchaser_id: cogswell.id,
                                        pending_supplier_conf: false } }
-      end.not_to change { SupplyLink.between(acme, cyberdyne).confirmed? }
+      end.not_to change { SupplyLink.between(acme, cogswell).confirmed? }
 
       # What should the user see after adding a company?
       # expect(response).to redirect_to(company_path(company))
     end
 
     it 'cannot cancel pending invitations/requests' do
-      cyberdyne     # initialize supply links
+      cogswell     # initialize supply links
 
       expect do
-        delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+        delete company_supply_link_path(acme, SupplyLink.between(acme, cogswell))
       end.not_to change(SupplyLink, :count)
 
       # What should the user see after adding a company?
@@ -151,22 +136,22 @@ describe 'SupplyLinks Endpoints', type: :request do
   end
 
   context 'with a non-member user' do
-    before(:each) { sign_in carol }
+    before(:each) { sign_in zack }
 
     it 'always redirects to company page' do
       post company_supply_links_path(acme)
       expect(response).to redirect_to(company_path(acme))
 
-      patch company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+      patch company_supply_link_path(acme, SupplyLink.between(acme, cogswell))
       expect(response).to redirect_to(company_path(acme))
 
-      delete company_supply_link_path(acme, SupplyLink.between(acme, cyberdyne))
+      delete company_supply_link_path(acme, SupplyLink.between(acme, cogswell))
       expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'with an admin of both companies' do
-    before(:each) { sign_in david }
+    before(:each) { sign_in aaron_burr }
 
     it 'always redirects to company page' do
       expect do
