@@ -12,7 +12,7 @@ require 'rails_helper'
 
 describe 'Items Endpoints', type: :request do
   let :inventory do
-    Array.new(20) { |i| create(:item, company: acme, name: i.to_s + Faker::Food.dish) }
+    Array.new(20) { |i| create(:item, supplier: acme, name: i.to_s + Faker::Food.dish) }
   end
 
   context 'with anonymous user' do

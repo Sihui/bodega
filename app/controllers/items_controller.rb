@@ -12,7 +12,7 @@ class ItemsController < ApplicationController
 
     respond_to do |format|
       if @item.save
-        format.html { redirect_to [@item.company, @item], notice: 'item was successfully created.' }
+        format.html { redirect_to [@item.supplier, @item], notice: 'item was successfully created.' }
         format.json { render :show, status: :created, location: @item }
       else
         format.html { render :new }
@@ -34,7 +34,7 @@ class ItemsController < ApplicationController
   def update
     respond_to do |format|
       if @item.update(item_params)
-        format.html { redirect_to [@item.company, @item], notice: 'Item was successfully created.' }
+        format.html { redirect_to [@item.supplier, @item], notice: 'Item was successfully created.' }
         format.json { render :show, status: :created, location: @item }
       else
         format.html { render :new }
@@ -70,6 +70,6 @@ class ItemsController < ApplicationController
 
     def item_params
       params.require(:item).permit(:name, :ref_code, :price, :unit_size)
-        .merge(params.permit(:company_id))
+        .merge(supplier_id: params[:company_id])
     end
 end

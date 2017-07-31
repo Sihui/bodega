@@ -10,9 +10,9 @@ table
   tbody
     - @items.each do |item|
       tr
-        td = link_to 'Show', [item.company, item]
-        td = link_to 'Edit', [item.company, item], action: :edit
-        td = link_to 'Destroy', [item.company, item], data: { confirm: 'Are you sure?' }, method: :delete
+        td = link_to 'Show', [item.supplier, item]
+        td = link_to 'Edit', [item.supplier, item], action: :edit
+        td = link_to 'Destroy', [item.supplier, item], data: { confirm: 'Are you sure?' }, method: :delete
 
 br
 
