@@ -1,0 +1,7 @@
+p#notice = notice
+
+h1 = @item.name
+
+= link_to 'Edit', [@item.company, @item], action: :edit
+'  |
+= link_to 'Back', [@item.company, @item], action: :index

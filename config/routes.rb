@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :companies, except: [:index] do
     resources :commitments, except: [:new, :edit, :show], shallow: true
     resources :supply_links, only: [:create, :update, :destroy]
+    resources :items
   end
 
   # Authentication -------------------------------------------------------------
