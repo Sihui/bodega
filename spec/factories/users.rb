@@ -5,14 +5,14 @@ FactoryGirl.define do
     password 'password'
 
     transient do
-      company nil
+      from    nil
       admin   false
       pending :none
     end
 
     before(:create) do |user, e|
-      if e.company
-        companies =* e.company  # coerce e.company to Array
+      if e.from
+        companies =* e.from  # coerce e.from to Array
         companies.each do |c|
           c.add_member(user, admin: e.admin, pending: e.pending)
         end
