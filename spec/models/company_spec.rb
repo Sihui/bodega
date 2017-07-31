@@ -7,7 +7,7 @@ RSpec.describe Company do
 
   describe 'attribute validation' do
     it 'requires a name' do
-      expect(build(:company, name: nil)).not_to be_valid
+      expect(build(:company, name: '')).not_to be_valid
     end
   end
 
