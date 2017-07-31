@@ -1,6 +1,6 @@
 class Company < ApplicationRecord
-  validates :name, presence: :true, uniqueness: true
-  validates :code, allow_nil: true
+  validates :name, uniqueness: true, presence: :true
+  validates :code, uniqueness: true, allow_nil: true
   has_many :purchaser_links, class_name:  :SupplyLink,
                              foreign_key: :supplier_id,
                              dependent:   :destroy
