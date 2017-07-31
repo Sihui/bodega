@@ -11,9 +11,7 @@ require 'rails_helper'
 # DELETE /companies/:company_id/items/:id(.:format)        items#destroy
 
 describe 'Items Endpoints', type: :request do
-  let :inventory do
-    Array.new(20) { |i| create(:item, supplier: acme, name: i.to_s + Faker::Food.dish) }
-  end
+  let :inventory { create_list(:item, 20, supplier: acme) }
 
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do

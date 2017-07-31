@@ -17,7 +17,7 @@ module Confirmable
     pending =* pending                             # coerce `pending` to Array
     pend, conf = confirmers.partition { |confirmer| pending.include?(confirmer) }
                    .map { |list| list.map { |k| "pending_#{k}_conf".to_sym } }
-    update_attributes(Hash[conf.product([false]) + pend.product([true])])
+    update(Hash[conf.product([false]) + pend.product([true])])
   end
 
   module ClassMethods

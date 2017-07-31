@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :supply_link do
-    association :supplier,  factory: :company
-    association :purchaser, factory: :company
+    supplier
+    purchaser
     pending_supplier_conf true
     pending_purchaser_conf true
   end
