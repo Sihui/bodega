@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170725024256) do
+ActiveRecord::Schema.define(version: 20170727090007) do
 
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -42,8 +42,11 @@ ActiveRecord::Schema.define(version: 20170725024256) do
     t.integer "price", null: false
     t.string "unit_size", null: false
     t.integer "company_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_items_on_company_id"
-    t.index ["name"], name: "index_items_on_name"
+    t.index ["name", "company_id"], name: "index_items_on_name_and_company_id", unique: true
+    t.index ["ref_code", "company_id"], name: "index_items_on_ref_code_and_company_id", unique: true
   end
 
   create_table "supply_links", force: :cascade do |t|

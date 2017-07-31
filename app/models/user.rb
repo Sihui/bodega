@@ -16,4 +16,8 @@ class User < ApplicationRecord
   def is_admin?(company)
     commitments.any? { |c| c.company == company && c.admin }
   end
+
+  def is_purchaser?(company)
+    (company.purchasers & companies).any?
+  end
 end

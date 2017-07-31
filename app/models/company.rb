@@ -6,10 +6,11 @@ class Company < ApplicationRecord
   has_many :supplier_links,  class_name:  :SupplyLink,
                              foreign_key: :purchaser_id,
                              dependent:   :destroy
-  has_many :purchasers, through: :supply_links
-  has_many :suppliers,  through: :supply_links
+  has_many :purchasers, through: :purchaser_links
+  has_many :suppliers,  through: :supplier_links
   has_many :commitments, dependent: :destroy
   has_many :users, through: :commitments
+  has_many :items
 
   def admin?(user)
     commitments.any? { |c| (c.user == user) && (c.admin) }
