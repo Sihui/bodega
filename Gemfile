@@ -62,7 +62,7 @@ end
 
 group :test do
   gem 'guard-rspec', '~> 4.7'
-  gem 'faker', '~> 1.7'
+  gem 'faker', '~> 1.8'
   gem 'launchy', '~> 2.4'
 end
 
