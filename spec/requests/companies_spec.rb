@@ -10,7 +10,7 @@ require 'rails_helper'
 #              PATCH  /companies/:id(.:format)      companies#update
 
 describe 'Companies Endpoints', type: :request do
-  let :co_name { Faker::Company.name }
+  let :attributes { attributes_for(:company) }
 
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
@@ -50,9 +50,9 @@ describe 'Companies Endpoints', type: :request do
     end
 
     it 'updates Company' do
-      patch company_path(acme), params: { company: { name: co_name } }
-      acme.reload             # reload object state from DB
-      expect(acme.name).to eq(co_name)
+      expect do
+        patch company_path(acme), params: { company: attributes }
+      end.to change { acme.reload.name }.to(attributes[:name])
       expect(response).to redirect_to(company_path(acme))
     end
   end
@@ -72,9 +72,9 @@ describe 'Companies Endpoints', type: :request do
     end
 
     it 'diverts from updates' do
-      patch company_path(acme), params: { company: { name: co_name } }
-      acme.reload             # reload object state from DB
-      expect(acme.name).not_to eq(co_name)
+      expect do
+        patch company_path(acme), params: { company: attributes }
+      end.not_to change { acme.reload.name }
       expect(response).to redirect_to(company_path(acme))
     end
   end
@@ -83,10 +83,11 @@ describe 'Companies Endpoints', type: :request do
     before(:each) { sign_in zack }
 
     it 'creates Company' do
-      expect { post companies_path, params: { company: { name: co_name } } }
+      expect { post companies_path, params: { company: attributes } }
         .to change(Company, :count).by(1)
-      expect(Company.find_by(name: co_name).admin?(zack)).to be(true)
-      expect(response).to redirect_to(company_path(Company.find_by(name: co_name)))
+      expect(Company.find_by(name: attributes[:name])).to eq(Company.last)
+      expect(Company.last.admin?(zack)).to be(true)
+      expect(response).to redirect_to(Company.last)
     end
 
     it 'shows “New” form' do
@@ -112,9 +113,9 @@ describe 'Companies Endpoints', type: :request do
     end
 
     it 'diverts from updates' do
-      patch company_path(acme), params: { company: { name: co_name } }
-      acme.reload             # reload object state from DB
-      expect(acme.name).not_to eq(co_name)
+      expect do
+        patch company_path(acme), params: { company: attributes }
+      end.not_to change { acme.reload.name }
       expect(response).to redirect_to(company_path(acme))
     end
   end

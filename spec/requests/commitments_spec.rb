@@ -28,6 +28,8 @@ describe 'Commitments Endpoints', type: :request do
     before(:each) { sign_in alice }
 
     it 'shows index' do
+      pending('view creation')
+
       arthur
 
       get company_commitments_path(acme)
@@ -75,6 +77,8 @@ describe 'Commitments Endpoints', type: :request do
     before(:each) { sign_in arthur }
 
     it 'shows index' do
+      pending('view creation')
+
       alice
 
       get company_commitments_path(acme)

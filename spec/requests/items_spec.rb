@@ -65,14 +65,14 @@ describe 'Items Endpoints', type: :request do
       get new_company_item_path(acme)
       expect(response.body)
         .to have_xpath("//form[@action='#{company_items_path(acme)}']"\
-                       "[@method='post']")
+                             "[@method='post']")
     end
 
     it 'displays an edit inventory item form' do
       get edit_company_item_path(acme, inventory.first)
       expect(response.body)
-        .to have_xpath("//form[@action='#{company_item_path(acme, inventory.first)}']"\
-                       "[@method='post']")
+        .to have_xpath("//form[@action='#{company_item_path(acme, inventory[0])}']"\
+                             "[@method='post']")
     end
 
     it 'displays item information' do

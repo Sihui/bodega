@@ -6,6 +6,7 @@ RSpec.describe "items/new", type: :view do
   end
 
   it "renders new item form" do
+    pending 'view creation'
     render
 
     assert_select "form[action=?][method=?]", items_path, "post" do
