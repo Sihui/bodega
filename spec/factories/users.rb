@@ -10,7 +10,7 @@ FactoryGirl.define do
       pending :none
     end
 
-    before(:create) do |user, e|
+    after(:build) do |user, e|
       if e.from
         companies =* e.from  # coerce e.from to Array
         companies.each do |c|

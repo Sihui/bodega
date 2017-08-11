@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     resources :items
   end
 
+  resources :orders
+
   # Authentication -------------------------------------------------------------
   devise_for :users, path: '', path_names: { registration: :users },
                                skip: [:passwords, :registrations]

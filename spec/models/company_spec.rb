@@ -9,6 +9,14 @@ RSpec.describe Company do
     it 'requires a name' do
       expect(build(:company, name: nil)).not_to be_valid
     end
+
+    it 'requires a code' do
+      expect(build(:company, code: nil)).not_to be_valid
+    end
+
+    it 'limits code to 4–6 alphanumeric characters' do
+      expect(build(:company, code: 'sally-jo')).not_to be_valid
+    end
   end
 
   describe 'association methods' do
@@ -16,7 +24,7 @@ RSpec.describe Company do
     end
   end
 
-  describe 'supports supplier-purchaser relationships' do
+  describe 'facilitates supplier-purchaser relationships' do
     it 'automatically becomes a supplier’s purchaser' do
       # acme.add_supplier(buynlarge)
       expect(buynlarge.purchasers).to include(acme)

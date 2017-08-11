@@ -2,7 +2,7 @@ class CreateCompanies < ActiveRecord::Migration[5.1]
   def change
     create_table :companies do |t|
       t.string :name,     null: false, index: { unique: true }
-      t.string :code,                  index: { unique: true }
+      t.string :code,     null: false, index: { unique: true }
       t.string :str_addr
       t.string :city
 

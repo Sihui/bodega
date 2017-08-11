@@ -1,6 +1,9 @@
 class Company < ApplicationRecord
-  validates :name, uniqueness: true, presence: :true
-  validates :code, uniqueness: true, allow_nil: true
+  validates :name, uniqueness: true, presence: true
+  validates :code, uniqueness: true, presence: true,
+                   format: { with:    /\A\w{4,6}\Z/,
+                             message: "Code must be 4–6 letters and/or numbers."}
+  before_save :format_code
   has_many :purchaser_links, class_name:  :SupplyLink,
                              foreign_key: :supplier_id,
                              dependent:   :destroy
@@ -10,8 +13,11 @@ class Company < ApplicationRecord
   has_many :purchasers, through: :purchaser_links
   has_many :suppliers,  through: :supplier_links
   has_many :commitments, dependent: :destroy
-  has_many :users, through: :commitments
   has_many :items, foreign_key: :supplier_id
+  has_many :users, through: :commitments
+  accepts_nested_attributes_for :commitments
+
+  # before_save :generate_code
 
   def admin?(user)
     commitments.any? { |c| (c.user == user) && (c.admin) }
@@ -38,4 +44,18 @@ class Company < ApplicationRecord
   def supply_links
     purchaser_links + supplier_links
   end
+
+  private
+
+  def format_code
+    self.code.upcase!
+  end
+
+  #   def generate_code
+  #     # TODO: repeat until unique
+  #     # TODO: employ alternate strategy to ensure code is 4 chars long
+  #     self.code ||= name.upcase.split('')
+  #                       .reject { |char| char !~ /[^\WAEIOUY]/ }
+  #                       .take(4).join
+  #   end
 end

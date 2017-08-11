@@ -24,7 +24,7 @@ class CommitmentsController < ApplicationController
 
   def update
     respond_to do |format|
-      if @commitment.update_attributes(commitment_params)
+      if @commitment.update(commitment_params)
         format.html { redirect_to @company, notice: 'Commitment was successfully updated.' }
         format.json { render :show, status: :created, location: @commitment }
       else

@@ -40,6 +40,7 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
+  gem 'faker', '~> 1.8'
   gem 'rspec-rails', '~> 3.6'
   gem 'factory_girl_rails', '~> 4.8'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -62,7 +63,6 @@ end
 
 group :test do
   gem 'guard-rspec', '~> 4.7'
-  gem 'faker', '~> 1.8'
   gem 'launchy', '~> 2.4'
 end
 
