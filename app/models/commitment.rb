@@ -5,6 +5,7 @@ class Commitment < ApplicationRecord
   belongs_to :user
   belongs_to :company
   validates :user_id, uniqueness: { scope: :company_id }
+  validates :admin,               inclusion: { in: [true, false] }
   validates :pending_admin_conf,  inclusion: { in: [true, false] }
   validates :pending_member_conf, inclusion: { in: [true, false] }
 

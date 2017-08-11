@@ -29,6 +29,14 @@ RSpec.describe SupplyLink, type: :model do
     it 'has ::between (no false negatives)' do
       expect(SupplyLink.between(acme, zorg)).not_to be_present
     end
+
+    it 'has ::for (happy path)' do
+      expect(SupplyLink.for(supplier: acme, purchaser: cyberdyne)).to be_present
+    end
+
+    it 'has ::for (no false negatives)' do
+      expect(SupplyLink.for(supplier: acme, purchaser: buynlarge)).not_to be_present
+    end
   end
 
   describe 'confirmability' do

@@ -27,9 +27,12 @@ class CompaniesController < ApplicationController
   # POST /companies.json
   def create
     @company = Company.new(company_params)
+    @company.commitments_attributes = [ { user: current_user, admin: true,
+                                          pending_admin_conf:  false,
+                                          pending_member_conf: false } ]
 
     respond_to do |format|
-      if @company.save && @company.add_member(current_user, admin: true)
+      if @company.save
         format.html { redirect_to @company, notice: 'Company was successfully created.' }
         format.json { render :show, status: :created, location: @company }
       else

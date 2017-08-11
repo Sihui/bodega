@@ -10,4 +10,8 @@ class SupplyLink < ApplicationRecord
   def self.between(a, b)
     find_by(supplier: a, purchaser: b) || find_by(supplier: b, purchaser: a)
   end
+
+  def self.for(supplier:, purchaser:)
+    find_by(supplier: supplier, purchaser: purchaser)
+  end
 end

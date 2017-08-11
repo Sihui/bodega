@@ -19,7 +19,7 @@ class SupplyLinksController < ApplicationController
 
   def update
     respond_to do |format|
-      if @supply_link.update_attributes(supply_link_params)
+      if @supply_link.update(supply_link_params)
         format.html { redirect_to @company, notice: 'Supply Link was successfully updated.' }
         format.json { render :show, status: :created, location: @supply_link }
       else

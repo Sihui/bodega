@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731061032) do
+ActiveRecord::Schema.define(version: 20170731100456) do
 
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20170731061032) do
 
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
-    t.string "code"
+    t.string "code", null: false
     t.string "str_addr"
     t.string "city"
     t.datetime "created_at", null: false
@@ -49,27 +49,37 @@ ActiveRecord::Schema.define(version: 20170731061032) do
     t.index ["supplier_id"], name: "index_items_on_supplier_id"
   end
 
-  create_table "order_items", force: :cascade do |t|
+  create_table "line_items", force: :cascade do |t|
     t.integer "order_id", null: false
     t.integer "item_id", null: false
     t.integer "qty", default: 1, null: false
     t.integer "price", null: false
-    t.integer "total", null: false
-    t.index ["item_id"], name: "index_order_items_on_item_id"
-    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.integer "line_total", null: false
+    t.boolean "comped", default: false, null: false
+    t.integer "qty_disputed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_line_items_on_item_id"
+    t.index ["order_id"], name: "index_line_items_on_order_id"
   end
 
   create_table "orders", force: :cascade do |t|
     t.integer "supplier_id", null: false
     t.integer "purchaser_id", null: false
+    t.integer "placed_by_id", null: false
+    t.integer "accepted_by_id"
+    t.string "invoice_no", null: false
+    t.integer "total"
     t.integer "discount"
     t.string "discount_type"
-    t.string "invoice", null: false
+    t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["accepted_by_id"], name: "index_orders_on_accepted_by_id"
+    t.index ["placed_by_id"], name: "index_orders_on_placed_by_id"
     t.index ["purchaser_id"], name: "index_orders_on_purchaser_id"
     t.index ["supplier_id"], name: "index_orders_on_supplier_id"
-    t.index [nil, "invoice"], name: "index_orders_on_supplier_and_invoice", unique: true
+    t.index [nil, "invoice_no"], name: "index_orders_on_supplier_and_invoice_no", unique: true
   end
 
   create_table "supply_links", force: :cascade do |t|

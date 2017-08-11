@@ -83,7 +83,8 @@ describe 'Companies Endpoints', type: :request do
     before(:each) { sign_in zack }
 
     it 'creates Company' do
-      expect { post companies_path, params: { company: attributes } }
+      expect { post companies_path,
+               params: { company: { name: co_name, code: 'ABCD' } } }
         .to change(Company, :count).by(1)
       expect(Company.find_by(name: attributes[:name])).to eq(Company.last)
       expect(Company.last.admin?(zack)).to be(true)
