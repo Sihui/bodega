@@ -32,6 +32,8 @@ RSpec.describe User, type: :model do
   end
 
   describe 'custom association methods' do
+    include_context 'roster'
+
     it 'has #belongs_to? (happy path)' do
       expect(alice.belongs_to?(acme)).to be(true)
     end

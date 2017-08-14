@@ -6,7 +6,7 @@ require 'rails_helper'
 # PUT    /supply_links/:id(.:format)                   supply_links#update
 # DELETE /supply_links/:id(.:format)                   supply_links#destroy
 
-describe 'SupplyLinks Endpoints', type: :request do
+RSpec.describe 'SupplyLinks Endpoints', type: :request do
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       post company_supply_links_path(acme)

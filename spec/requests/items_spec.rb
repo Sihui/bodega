@@ -10,7 +10,7 @@ require 'rails_helper'
 # PUT    /companies/:company_id/items/:id(.:format)        items#update
 # DELETE /companies/:company_id/items/:id(.:format)        items#destroy
 
-describe 'Items Endpoints', type: :request do
+RSpec.describe 'Items Endpoints', type: :request do
   let :inventory { create_list(:item, 20, supplier: acme) }
 
   context 'with anonymous user' do

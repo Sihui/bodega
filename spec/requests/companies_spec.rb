@@ -9,7 +9,7 @@ require 'rails_helper'
 #              DELETE /companies/:id(.:format)      companies#destroy
 #              PATCH  /companies/:id(.:format)      companies#update
 
-describe 'Companies Endpoints', type: :request do
+RSpec.describe 'Companies Endpoints', type: :request do
   let :attributes { attributes_for(:company) }
 
   context 'with anonymous user' do
@@ -84,7 +84,7 @@ describe 'Companies Endpoints', type: :request do
 
     it 'creates Company' do
       expect { post companies_path,
-               params: { company: { name: co_name, code: 'ABCD' } } }
+               params: { company: attributes.slice(:name, :code) } }
         .to change(Company, :count).by(1)
       expect(Company.find_by(name: attributes[:name])).to eq(Company.last)
       expect(Company.last.admin?(zack)).to be(true)

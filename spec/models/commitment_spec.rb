@@ -26,6 +26,8 @@ RSpec.describe Commitment, type: :model do
   end
 
   describe 'association methods' do
+    include_context 'roster'
+
     it 'has ::between (happy path)' do
       expect(Commitment.between(alice, acme)).to be_present
     end
@@ -36,6 +38,8 @@ RSpec.describe Commitment, type: :model do
   end
 
   describe 'confirmability' do
+    include_context 'roster'
+
     it 'has #confirmed? (happy path)' do
       expect(Commitment.between(alice, acme).confirmed?).to be(true)
     end

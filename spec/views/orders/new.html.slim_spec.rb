@@ -5,7 +5,7 @@ RSpec.describe "orders/new", type: :view do
     assign(:order, Order.new(
       :supplier => nil,
       :purchaser => nil,
-      :invoice => "MyString"
+      :invoice_no => "MyString"
     ))
   end
 
@@ -19,7 +19,7 @@ RSpec.describe "orders/new", type: :view do
 
       assert_select "input[name=?]", "order[purchaser_id]"
 
-      assert_select "input[name=?]", "order[invoice]"
+      assert_select "input[name=?]", "order[invoice_no]"
     end
   end
 end

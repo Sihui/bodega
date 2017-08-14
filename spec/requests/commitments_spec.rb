@@ -7,7 +7,7 @@ require 'rails_helper'
 # PUT    /commitments/:id(.:format)                   commitments#update
 # DELETE /commitments/:id(.:format)                   commitments#destroy
 
-describe 'Commitments Endpoints', type: :request do
+RSpec.describe 'Commitments Endpoints', type: :request do
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       get company_commitments_path(acme)
