@@ -88,7 +88,8 @@ class OrdersController < ApplicationController
     end
 
     def order_params
-      OrderParams.new(params.fetch(:order).merge(params.permit(:id)))
+      filtered_params = params.fetch(:order).merge(params.permit(:id))
+      OrderParams.new(filtered_params)
     end
 
     def update_type
