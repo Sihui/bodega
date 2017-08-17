@@ -4,11 +4,13 @@ html
     title Bodega
     = csrf_meta_tags
 
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag    'application', 'data-turbolinks-track': 'reload', media: 'all'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-
   body
     header
       - flash.each do |type, msg|
-         p[class=type] #{msg}
+        p[class=type] #{msg}
+      = render 'shared/nav'
     = yield
+    footer
+      hello

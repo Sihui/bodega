@@ -1,0 +1,7 @@
+ul
+  - if user_signed_in?
+    li #{link_to 'Sign out', destroy_account_session_path, method: :delete}
+    li #{link_to 'Your Profile', current_user}
+  - else
+    li #{link_to 'Sign up', new_account_registration_path}
+    li #{link_to 'Sign in', new_account_session_path}
