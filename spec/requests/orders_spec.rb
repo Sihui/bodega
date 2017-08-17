@@ -26,33 +26,33 @@ RSpec.describe 'Orders Endpoints', type: :request do
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       get orders_path
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       post orders_path
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       get new_order_path
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       get edit_order_path(anything)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       get order_path(anything)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       patch order_path(anything)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       put order_path(anything)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       delete order_path(anything)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
     end
   end
 
   context 'with an admin user (of supplier)' do
-    before :each { sign_in alice }
+    before :each { sign_in alice.account }
 
     # CREATE
     it 'diverts from new order form' do
@@ -200,7 +200,7 @@ RSpec.describe 'Orders Endpoints', type: :request do
   end
 
   context 'with a non-admin user (of supplier)' do
-    before(:each) { sign_in arthur }
+    before(:each) { sign_in arthur.account }
 
     # CREATE
     it 'diverts from new order form' do
@@ -347,7 +347,7 @@ RSpec.describe 'Orders Endpoints', type: :request do
   end
 
   context 'with a non-admin member (of purchaser)' do
-    before(:each) { sign_in carol }
+    before(:each) { sign_in carol.account }
 
     # CREATE
     it 'displays the new order form' do
@@ -492,7 +492,7 @@ RSpec.describe 'Orders Endpoints', type: :request do
   end
 
   context 'with an unaffiliated user' do
-    before(:each) { sign_in zack }
+    before(:each) { sign_in zack.account }
 
     # CREATE
     it 'diverts from new order form' do
