@@ -3,13 +3,6 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   helper_method [:current_user, :user_signed_in?]
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up) do |user_params|
-      user_params.permit(:email, :password, :password_confirmation,
-                         { user_attributes: [:name] })
-    end
-  end
-
   def current_user
     current_account.user
   end
@@ -21,4 +14,14 @@ class ApplicationController < ActionController::Base
   def authenticate_user!
     authenticate_account!
   end
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up) do |user_params|
+      user_params.permit(:email, :password, :password_confirmation,
+                         { user_attributes: [:name] })
+    end
+  end
+
 end
