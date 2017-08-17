@@ -1,6 +1,16 @@
 Project
 ================================================================================
 
+## Frontend Design
+
+* /profile
+  * User info
+  * Index of affiliated companies
+    * Staff preview
+    * Supply links
+    * Inventory size
+    * Outstanding orders
+
 ## Reevaluate design
 
 * TODO invoice number formatting rules
@@ -39,12 +49,6 @@ Have a status: open, modified (pending confirmation), confirmed, delivered, flag
    * `total`
    * `comped`
    * `qty_disputed`
-
-### Reports
-
-## Layout
-
-* TODO Learn Vue.js
 
 ## API
 
