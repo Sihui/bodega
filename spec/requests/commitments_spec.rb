@@ -11,21 +11,21 @@ RSpec.describe 'Commitments Endpoints', type: :request do
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       get company_commitments_path(acme)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
 
       post company_commitments_path(acme)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
 
       patch commitment_path(alice.commitments.first)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
 
       delete commitment_path(alice.commitments.first)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
     end
   end
 
   context 'with an admin user' do
-    before(:each) { sign_in alice }
+    before(:each) { sign_in alice.account }
 
     it 'shows index' do
       pending "view creation"
@@ -73,7 +73,7 @@ RSpec.describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-admin user' do
-    before(:each) { sign_in arthur }
+    before(:each) { sign_in arthur.account }
 
     it 'shows index' do
       pending "view creation"
@@ -117,7 +117,7 @@ RSpec.describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-member, invited user' do
-    before(:each) { sign_in andrew }
+    before(:each) { sign_in andrew.account }
 
     it 'diverts from the index' do
       get company_commitments_path(acme)
@@ -182,7 +182,7 @@ RSpec.describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-member, requested user' do
-    before(:each) { sign_in amelia }
+    before(:each) { sign_in amelia.account }
 
     it 'diverts from the index' do
       get company_commitments_path(acme)
@@ -207,7 +207,7 @@ RSpec.describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-member user' do
-    before(:each) { sign_in zack }
+    before(:each) { sign_in zack.account }
 
     it 'diverts from modifying other users’ memberships' do
       acme.add_member(amelia, pending: :member)

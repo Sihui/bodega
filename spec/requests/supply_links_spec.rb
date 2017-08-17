@@ -10,18 +10,18 @@ RSpec.describe 'SupplyLinks Endpoints', type: :request do
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       post company_supply_links_path(acme)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
 
       patch company_supply_link_path(acme, anything)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
 
       delete company_supply_link_path(acme, anything)
-      expect(response).to redirect_to new_user_session_path
+      expect(response).to redirect_to new_account_session_path
     end
   end
 
   context 'with an admin user' do
-    before(:each) { sign_in alice }
+    before(:each) { sign_in alice.account }
 
     it 'adds new purchasers/suppliers (pending confirmation)' do
       expect do
@@ -84,7 +84,7 @@ RSpec.describe 'SupplyLinks Endpoints', type: :request do
   end
 
   context 'with a non-admin user' do
-    before(:each) { sign_in arthur }
+    before(:each) { sign_in arthur.account }
 
     it 'cannot add new purchasers/suppliers' do
       expect do
@@ -120,7 +120,7 @@ RSpec.describe 'SupplyLinks Endpoints', type: :request do
   end
 
   context 'with a non-member user' do
-    before(:each) { sign_in zack }
+    before(:each) { sign_in zack.account }
 
     it 'always redirects to company page' do
       post company_supply_links_path(acme)
@@ -135,7 +135,7 @@ RSpec.describe 'SupplyLinks Endpoints', type: :request do
   end
 
   context 'with an admin of both companies' do
-    before(:each) { sign_in aaron_burr }
+    before(:each) { sign_in aaron_burr.account }
 
     it 'always redirects to company page' do
       expect do

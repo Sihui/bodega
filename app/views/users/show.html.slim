@@ -1,0 +1,6 @@
+.user_details
+  h2.user_name #{@user.name}
+  p.user_email #{@user.email}
+  p Last login #{time_ago_in_words(@user.account.last_sign_in_at)} ago
+
+.company_index

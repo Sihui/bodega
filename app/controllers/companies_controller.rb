@@ -63,7 +63,7 @@ class CompaniesController < ApplicationController
     redirect_to @company and return unless @company.admin?(current_user)
     @company.destroy
     respond_to do |format|
-      format.html { redirect_to user_registration_path, notice: 'Company was successfully destroyed.' }
+      format.html { redirect_to account_registration_path, notice: 'Company was successfully destroyed.' }
       format.json { head :no_content }
     end
   end

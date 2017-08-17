@@ -1,7 +1,7 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_vars
-  before_action :authorize_user!
+  before_action :authorize_user
 
   def index
     @items = @company.items
@@ -58,7 +58,7 @@ class ItemsController < ApplicationController
       @item = Item.find(params[:id]) if params.key?(:id)
     end
 
-    def authorize_user!
+    def authorize_user
       if current_user.is_admin?(@company)
         return
       elsif current_user.is_purchaser?(@company) || current_user.belongs_to?(@company)
