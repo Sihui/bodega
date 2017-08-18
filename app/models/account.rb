@@ -4,6 +4,6 @@ class Account < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  belongs_to :user
+  belongs_to :user, validate: false
   accepts_nested_attributes_for :user
 end
