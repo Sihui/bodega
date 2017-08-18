@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   devise_for :accounts, path: '', skip: [:registrations]
 
   devise_scope :account do
-    get    '/join',      to: 'devise/registrations#new',     as: :new_account_registration
+    get    '/join',   to: 'devise/registrations#new',     as: :new_account_registration
     post   '/account',   to: 'devise/registrations#create',  as: :account_registration
     patch  '/account',   to: 'devise/registrations#update',  as: ''
     put    '/account',   to: 'devise/registrations#update',  as: ''
