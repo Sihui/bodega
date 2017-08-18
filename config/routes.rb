@@ -24,7 +24,7 @@ Rails.application.routes.draw do
     delete '/account',   to: 'devise/registrations#destroy', as: ''
   end
 
-  # get '/account', to: redirect('/join')
+  get '/account', to: redirect('/join')
 
   # Static pages ---------------------------------------------------------------
   HighVoltage.configure do |config|
