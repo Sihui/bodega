@@ -6,10 +6,12 @@ html
 
     = stylesheet_link_tag    'application', 'data-turbolinks-track': 'reload', media: 'all'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = yield :vue
   body
     header
+      ul#flash
       - flash.each do |type, msg|
-        p[class=type] #{msg}
+        li[class=type] #{msg}
       = render 'shared/nav'
     = yield
     footer

@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   # Main Resources -------------------------------------------------------------
-  resources :users, only: [:show, :update]
+  resource :user, only: [:show, :update] do
+    resources :companies, only: [:create], module: :users
+  end
+
   resources :companies, except: [:index] do
     resources :commitments, except: [:new, :edit, :show], shallow: true
     resources :supply_links, only: [:create, :update, :destroy]

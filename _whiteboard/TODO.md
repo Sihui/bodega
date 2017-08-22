@@ -1,15 +1,41 @@
 Project
 ================================================================================
 
-## Frontend Design
+## RIGHT NOW
 
-* /profile
+1. Convert company-index to a vue component
+2. USE PROPS
+
+## UI/UX
+
+### View: root
+
+### Partial: Nav menu
+
+### View: users/show
+
+* /user
   * User info
   * Index of affiliated companies
     * Staff preview
     * Supply links
     * Inventory size
     * Outstanding orders
+
+#### What should happen when I click the button?
+
+1. DONE The button should deactivate
+2. The endpoint should be hit
+   * DONE What response should it give?
+3. Upon success,
+   * DONE a flash message should be rendered
+   * DONE the company-index should be reloaded (data retrieved by AJAX)
+   * DONE the form should be reset
+4. On failure,
+   * DONE a flash message should be rendered
+   * DONE the button should reactivate
+
+### View: company/(:id)
 
 ## Reevaluate design
 

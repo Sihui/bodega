@@ -1,12 +1,13 @@
+- content_for :vue do
+  = javascript_pack_tag 'users_show'
+  = stylesheet_pack_tag 'users_show'
+
 .user_details
   h2.user_name #{@user.name}
+  | (edit link goes here)
   p.user_email #{@user.email}
   p Last login #{time_ago_in_words(@user.account.last_sign_in_at)} ago
 
-.company_index
-  h2 Companies
-  - user.companies.each do |company|
-    .company_snippet
-      h3.company_name #{company.name}
-      p.company_city  #{company.city}
-      p.company_size  #{pluralize(company.users.count, 'staff member')}
+company-index
+
+= hidden_field_tag('companies_list', @user.companies.to_json)
