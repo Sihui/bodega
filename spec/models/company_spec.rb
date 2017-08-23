@@ -25,6 +25,7 @@ RSpec.describe Company do
   end
 
   describe 'facilitates supplier-purchaser relationships' do
+    include_context 'roster'
     it 'automatically becomes a supplier’s purchaser' do
       # acme.add_supplier(buynlarge)
       expect(buynlarge.purchasers).to include(acme)
