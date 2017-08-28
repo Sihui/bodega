@@ -25,6 +25,10 @@ gem 'uglifier', '>= 1.3.0'
 # Use Devise for authentication
 gem 'devise', '~> 4.3'
 
+# Use jquery-rails
+gem 'jquery-rails', '~> 4.3'
+# Use gon to pass data from Rails to JS
+gem 'gon', '~> 6.1'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -67,4 +71,4 @@ group :test do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
