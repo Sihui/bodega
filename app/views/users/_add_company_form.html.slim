@@ -1,0 +1,27 @@
+button#show_form_button Add
+= form_with url: companies_path, scope: :company, id: 'add_company_form', class: 'hidden' do |f|
+
+  .field
+    = f.label 'Company Name'
+    = f.text_field :name
+
+  .field
+    = f.label 'Shortcode'
+    = f.text_field :code
+
+  .field
+    = f.label 'Street Address'
+    = f.text_field :str_addr
+
+  .field
+    = f.label 'City'
+    = f.text_field :city
+
+  .actions[style="display: inline-block"]
+    = f.submit "Create", id: 'submit_form_button'
+    button#hide_form_button[style="display: inline-block"] Cancel
+
+css:
+  .hidden {
+    display: none;
+  }

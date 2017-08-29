@@ -23,22 +23,14 @@ class CompaniesController < ApplicationController
     redirect_to @company unless @company.admin?(current_user)
   end
 
-  # POST /companies
-  # POST /companies.json
+  # responds ONLY with JSON
   def create
     @company = Company.new(company_params)
-    @company.commitments_attributes = [ { user: current_user, admin: true,
-                                          pending_admin_conf:  false,
-                                          pending_member_conf: false } ]
 
-    respond_to do |format|
-      if @company.save
-        format.html { redirect_to @company, notice: 'Company was successfully created.' }
-        format.json { render :show, status: :created, location: @company }
-      else
-        format.html { render :new }
-        format.json { render json: @company.errors, status: :unprocessable_entity }
-      end
+    if current_user.save_company(@company)
+      render status: :created
+    else
+      render status: :unprocessable_entity
     end
   end
 

@@ -7,6 +7,10 @@ class User < ApplicationRecord
   has_many :commitments
   has_many :companies, through: :commitments
 
+  def save_company(company)
+    company.save && company.add_member(self, admin: true)
+  end
+
   def belongs_to?(company)
     companies.include?(company) && Commitment.between(self, company).confirmed?
   end

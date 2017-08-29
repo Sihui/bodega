@@ -1,8 +1,8 @@
 class Company < ApplicationRecord
   validates :name, uniqueness: true, presence: true
-  validates :code, uniqueness: true, presence: true,
-                   format: { with:    /\A\w{4,6}\Z/,
-                             message: "Code must be 4–6 letters and/or numbers."}
+  validates :code, uniqueness: true,
+                   format: { with:    /\A\w{3,6}\Z/,
+                             message: "must be 3–6 letters/numbers"}
   before_save :format_code
   has_many :purchaser_links, class_name:  :SupplyLink,
                              foreign_key: :supplier_id,

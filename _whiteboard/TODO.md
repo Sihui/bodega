@@ -1,23 +1,32 @@
 Project
 ================================================================================
 
-## Frontend Design
+## RIGHT NOW
 
-* /profile
-  * User info
-  * Index of affiliated companies
-    * Staff preview
-    * Supply links
-    * Inventory size
-    * Outstanding orders
+Add company#show view:
 
-## Reevaluate design
+* Admin: Approve requests, add other users, manage supply links (add/approve)
+* Non-admin: manage inventory, view supply links index
+* Purchaser: View inventory
+* Non-member: View details, request membership
 
+## UP NEXT
+
+## LATER
+
+* Routes: duplicate URLs with `as: ''`?
+* [Override High Voltage controller][hv]
+  * TODO shows landing page if no `current_user`
+  * TODO shows dashboard if logged in
+
+### Reevaluate design
+
+* TODO company code validation rules
 * TODO invoice number formatting rules
 * TODO referential integrity, e.g., for when a user wants to remove an
        item which was referenced in previous orders (and is thus blocked)
 
-### Orders
+### Orders Schema
 
 Have a status: open, modified (pending confirmation), confirmed, delivered, flagged (for review)
 
@@ -49,19 +58,6 @@ Have a status: open, modified (pending confirmation), confirmed, delivered, flag
    * `total`
    * `comped`
    * `qty_disputed`
-
-## API
-
-### Static
-
-* `GET    /home(.:format)                redirect(301, /)`
-  * [Override High Voltage controller][hv]
-    * TODO shows landing page if no `current_user`
-    * TODO shows dashboard if logged in
-
-## Look up later
-
-  * Routes: duplicate URLs with `as: ''`?
 
 Meta-Work
 ================================================================================
