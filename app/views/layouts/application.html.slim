@@ -9,6 +9,7 @@ html
     = javascript_include_tag 'application', "data-turbolinks-track": "reload"
   body
     header
+      = render "shared/nav"
       - flash.each do |type, msg|
          p[class=type] #{msg}
     = yield
