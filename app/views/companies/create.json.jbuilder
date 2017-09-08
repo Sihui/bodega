@@ -1,9 +1,26 @@
 if @company.persisted?
   json.flash({ notice: "#{@company.name} was created successfully." })
-  json.snippet(render partial: 'companies/snippet', object: @company, as: :company)
-  json.li(render partial: 'companies/li', object: @company, as: :company)
+  if (@company.users.count == 1) && (@company.users.first.companies.count == 1)
+    json.rerender([{ replace: "that.rendered",
+                     with: render(partial: 'companies/snippet',
+                                  object: @company,
+                                  as: :company) },
+                   { append: render(partial: 'companies/li',
+                                    object: @company,
+                                    as: :company),
+                     to: "$('#nav__companies')" }])
+  else
+    json.rerender([{ append: render(partial: 'companies/snippet',
+                                    object: @company,
+                                    as: :company),
+                     to: "that.rendered" },
+                   { append: render(partial: 'companies/li',
+                                    object: @company,
+                                    as: :company),
+                     to: "$('#nav__companies')" }])
+  end
 else
-  subject = @company.name.blank? ? "Company" : @company.name
-  json.flash({ alert: "#{subject} could not be saved." })
+  name = @company.name.blank? ? "Company" : @company.name
+  json.flash({ alert: "#{name} could not be saved." })
   json.errors @company.errors
 end

@@ -1,0 +1,9 @@
+h2 Members
+#pending_commitment_summary
+  = render "companies/pending_commitment_summary"
+ul#member_index.form_rendered
+  = render partial: 'companies/member_snippet',
+           collection: @company.confirmed_members,
+           as: :member
+#add_member.form_container
+  = render "companies/member_form"

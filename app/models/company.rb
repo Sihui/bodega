@@ -13,11 +13,31 @@ class Company < ApplicationRecord
   has_many :purchasers, through: :purchaser_links
   has_many :suppliers,  through: :supplier_links
   has_many :commitments, dependent: :destroy
-  has_many :items, foreign_key: :supplier_id
+  has_many :items, foreign_key: :supplier_id, dependent: :destroy
   has_many :users, through: :commitments
   accepts_nested_attributes_for :commitments
 
-  # before_save :generate_code
+  def self.search(query, filters = {})
+    results = where('LOWER(name) LIKE :query OR LOWER(code) LIKE :query',
+                    query: "%#{query}%")
+
+    if filters.keys.include?('of')
+      orig = find_by(name: filters['of'])
+      results = results.where('id IS NOT ?', orig.id)
+
+      if filters.keys.include?('as')
+        case filters['as'].to_sym
+        when :new_supplier
+          filter = orig.suppliers.any? ? orig.suppliers.pluck(:id) : 0
+        when :new_purchaser
+          filter = orig.purchasers.any? ? orig.purchasers.pluck(:id) : 0
+        end
+        results = results.where('id NOT IN (?)', filter)
+      end
+    end
+
+    results
+  end
 
   def admin?(user)
     commitments.any? { |c| (c.user == user) && (c.admin) }
@@ -45,17 +65,49 @@ class Company < ApplicationRecord
     purchaser_links + supplier_links
   end
 
+  def confirmed_members
+    commitments.select(&:confirmed?).map(&:user)
+  end
+
+  def unconfirmed_members
+    commitments.reject(&:confirmed?).map(&:user)
+  end
+
+  def requests_pending_member
+    commitments.select(&:pending_member_conf?)
+  end
+
+  def requests_pending_admin
+    commitments.select(&:pending_admin_conf?)
+  end
+
+  def confirmed_purchasers
+    purchaser_links.select(&:confirmed?).map(&:purchaser)
+  end
+
+  def confirmed_suppliers
+    supplier_links.select(&:confirmed?).map(&:supplier)
+  end
+
+  def requests_from_purchasers
+    purchaser_links.select(&:pending_supplier_conf?)
+  end
+
+  def requests_from_suppliers
+    supplier_links.select(&:pending_purchaser_conf?)
+  end
+
+  def requests_to_purchasers
+    purchaser_links.select(&:pending_purchaser_conf?)
+  end
+
+  def requests_to_suppliers
+    supplier_links.select(&:pending_supplier_conf?)
+  end
+
   private
 
   def format_code
     self.code.upcase!
   end
-
-  #   def generate_code
-  #     # TODO: repeat until unique
-  #     # TODO: employ alternate strategy to ensure code is 4 chars long
-  #     self.code ||= name.upcase.split('')
-  #                       .reject { |char| char !~ /[^\WAEIOUY]/ }
-  #                       .take(4).join
-  #   end
 end

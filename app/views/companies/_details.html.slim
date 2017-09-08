@@ -1,0 +1,10 @@
+h1
+  span#company_name #{@company.name}
+  |  (
+  span#company_code #{@company.code}
+  | )
+p#company_address
+  - unless @company.str_addr.blank?
+    | #{@company.str_addr} <br>
+  - unless @company.city.blank?
+    | #{@company.city}

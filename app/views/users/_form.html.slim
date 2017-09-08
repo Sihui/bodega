@@ -1,0 +1,9 @@
+button Edit Profile
+= form_with model: current_user do |f|
+
+  .field
+    = f.label 'Name'
+    = f.text_field :name
+  .actions
+    = f.submit "Update"
+    button Cancel

@@ -6,27 +6,11 @@ class SupplyLinksController < ApplicationController
   def create
     @supply_link = SupplyLink.new(supply_link_params)
 
-    respond_to do |format|
-      if @supply_link.save
-        format.html { redirect_to @company, notice: 'Supply Link was successfully created.' }
-        format.json { render :show, status: :created, location: @supply_link }
-      else
-        format.html { redirect_to @company, alert: 'Supply Link failed to be created.' }
-        format.json { render json: @supply_link.errors, status: :unprocessable_entity }
-      end
-    end
+    render status: @supply_link.save ? :created : :unprocessable_entity
   end
 
   def update
-    respond_to do |format|
-      if @supply_link.update(supply_link_params)
-        format.html { redirect_to @company, notice: 'Supply Link was successfully updated.' }
-        format.json { render :show, status: :created, location: @supply_link }
-      else
-        format.html { render :new }
-        format.json { render json: @supply_link.errors, status: :unprocessable_entity }
-      end
-    end
+    render status: @supply_link.update(supply_link_params) ? :ok : :unprocessable_entity
   end
 
   def destroy

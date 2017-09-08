@@ -3,21 +3,24 @@ Project
 
 ## RIGHT NOW
 
-Add company#show view:
-
-* Admin: Approve requests, add other users, manage supply links (add/approve)
-* Non-admin: manage inventory, view supply links index
-* Purchaser: View inventory
-* Non-member: View details, request membership
+* add “cancel” buttons to confirmation dialogs for memberships and supply links
+* add “admin” checkbox for adding new members
+* add delete buttons for various resources (where should they go?)
 
 ## UP NEXT
 
+* clean up partials (move to appropriate folders)
+* company search box
+* place orders
+
 ## LATER
 
+* rename `Company#users` to `Company#members`
 * Routes: duplicate URLs with `as: ''`?
 * [Override High Voltage controller][hv]
   * TODO shows landing page if no `current_user`
   * TODO shows dashboard if logged in
+* implement garber-irish DOM-ready javascript
 
 ### Reevaluate design
 

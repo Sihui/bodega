@@ -1,16 +1,20 @@
 Rails.application.routes.draw do
   # Main Resources -------------------------------------------------------------
   resource :user, only: [:show, :update]
-  resources :companies, except: [:index] do
-    resources :commitments, except: [:new, :edit, :show], shallow: true
-    resources :supply_links, only: [:create, :update, :destroy]
-    resources :items
+  resources :companies, except: [:index, :edit] do
+    resources :commitments, only: [:create, :update, :destroy], shallow: true
+    resources :supply_links, only: [:update, :destroy]
+    resources :purchasers, only: [:create, :update], controller: 'supply_links/purchasers'
+    resources :suppliers, only: [:create, :update], controller: 'supply_links/suppliers'
+    resources :items, only: [:create, :update, :destroy]
   end
   resources :orders
 
-  namespace :reports do
-    resources :transactions, only: [:index, :show]
-  end
+  get '/search', to: 'searches#show'
+
+  # namespace :reports do
+  #   resources :transactions, only: [:index, :show]
+  # end
 
   # Authentication -------------------------------------------------------------
   # See https://github.com/plataformatec/devise#configuring-routes

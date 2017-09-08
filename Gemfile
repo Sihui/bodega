@@ -27,6 +27,7 @@ gem 'devise', '~> 4.3'
 
 # Use jquery-rails
 gem 'jquery-rails', '~> 4.3'
+gem 'jquery-ui-rails', '~> 6.0'
 # Use gon to pass data from Rails to JS
 gem 'gon', '~> 6.1'
 # Use CoffeeScript for .coffee assets and views

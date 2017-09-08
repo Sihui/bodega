@@ -1,0 +1,11 @@
+- commitment = Commitment.between(current_user, @company)
+- if commitment.nil?
+  = form_with url: company_commitments_path(@company), scope: :commitment do |f|
+    = f.hidden_field(:user_id, value: current_user.id)
+    = f.hidden_field(:pending_member_conf, value: false)
+    .actions
+      = f.submit "Join"
+- elsif commitment.pending_admin_conf?
+  p Membership request pending
+- elsif commitment.pending_member_conf?
+  p You have an open invitation to join this company. Go to your profile to view it!

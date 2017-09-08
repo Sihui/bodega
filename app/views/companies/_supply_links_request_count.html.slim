@@ -1,0 +1,5 @@
+- if @company.send("requests_from_#{their_role}s").any?
+  ' #{pluralize(@company.send("requests_from_#{their_role}s").count, 'open request')}
+  - unless current_user.is_admin?(@company)
+    | (#{@company.send("requests_from_#{their_role}s")
+         .map(&their_role).map(&:name).join(', ')})
