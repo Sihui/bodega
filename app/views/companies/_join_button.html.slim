@@ -1,10 +1,10 @@
 - commitment = Commitment.between(current_user, @company)
 - if commitment.nil?
-  = form_with url: company_commitments_path(@company), scope: :commitment do |f|
-    = f.hidden_field(:user_id, value: current_user.id)
-    = f.hidden_field(:pending_member_conf, value: false)
-    .actions
-      = f.submit "Join"
+  = button_to("Join",
+              company_commitments_path(@company),
+              remote: true,
+              params: { commitment: { user_id: current_user.id,
+                                      pending_member_conf: false } })
 - elsif commitment.pending_admin_conf?
   p Membership request pending
 - elsif commitment.pending_member_conf?

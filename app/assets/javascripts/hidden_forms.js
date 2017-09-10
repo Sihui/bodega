@@ -1,6 +1,6 @@
 // Set up forms whose visibility can be toggled on/off.
 //
-// Usage: `new BODEGA.FormUI(selector[, options])`
+// Usage: `new BODEGA.HiddenForm(selector[, options])`
 //
 // Required DOM structure:
 //
@@ -34,12 +34,12 @@
 //
 //   * `search`: parameters for the /search API request (`model` and `filter`)
 
-BODEGA.FormUI = function(selector, options) {
+BODEGA.HiddenForm = function(selector, options) {
 // Init ------------------------------------------------------------------------
   this.container = $(selector);
 
   if (this.container.length > 1) {
-    this.container.each(function(i, el) { new BODEGA.FormUI(el); });
+    this.container.each(function(i, el) { new BODEGA.HiddenForm(el); });
   } else if (this.container.length) {
     this.form     = this.container.children('.form_container').children('form');
     this.showBtn  = this.container.children('.form_container').children('button');
@@ -47,23 +47,19 @@ BODEGA.FormUI = function(selector, options) {
     this.rendered = this.container.children('.form_rendered');
     this.resource = this.container.data().resource;
 
-    if (this._valid()) {
-      this._attachListeners();
-      if (options && options.search) {
-        this._initAutocomplete(options.search);
-      }
+    this._attachListeners();
+    if (options && options.search) {
+      var that = this;
+      new BODEGA.Autocomplete(that.form, options.search, function(event, ui) {
+        that.form.find('.ui-autocomplete-input').val(ui.item.name)
+          .next().val(ui.item.id);
+        that.form.submit();
+      });
     }
   }
 };
 
-BODEGA.FormUI.prototype = {
-// Validator -------------------------------------------------------------------
-  _valid: function() {
-    return (typeof(this.form)    !== 'undefined' &&
-            typeof(this.showBtn) !== 'undefined' &&
-            typeof(this.hideBtn) !== 'undefined');
-  },
-
+BODEGA.HiddenForm.prototype = {
 // Listeners -------------------------------------------------------------------
   _attachListeners: function() {
     var that = this;
@@ -121,7 +117,7 @@ BODEGA.FormUI.prototype = {
           // Attach new listeners
           if (data.rerender[i].needsListeners) {
             var newForm = eval(data.rerender[i].to).children().last().get(0);
-            if (! $._data(newForm, 'events')) { new BODEGA.FormUI($(newForm)); }
+            if (! $._data(newForm, 'events')) { new BODEGA.HiddenForm($(newForm)); }
           }
         }
       }
@@ -133,31 +129,6 @@ BODEGA.FormUI.prototype = {
       }
       if (that.resource && xhr.responseJSON.errors) {
         that._showHints(xhr.responseJSON.errors, that.resource);
-      }
-    });
-  },
-
-// Autocomplete ----------------------------------------------------------------
-  _initAutocomplete: function(search) {
-    var that = this;
-    search.filters = (typeof(search.filters) !== 'undefined') ? search.filters : {};
-
-    this.form.find('.ui-autocomplete-input').autocomplete({
-      source: function(req, res) {
-        $.ajax({
-          type:    'GET',
-          url:     '/search',
-          data:    { search: { model: search.model,
-                               query: req.term,
-                               filters: search.filter } },
-          success: function(data) { res(data); },
-          error:   function(data) { res([]); }
-        });
-      },
-      select: function(event, ui) {
-        that.form.find('.ui-autocomplete-input').val(ui.item.name)
-          .next().val(ui.item.id);
-        that.form.submit();
       }
     });
   },
