@@ -1,0 +1,6 @@
+h3#item_name
+  ' #{item.name}
+  - unless item.ref_code.blank?
+    | (#{item.ref_code})
+p#item_price #{item.price}元
+p#item_unit_size #{item.unit_size}

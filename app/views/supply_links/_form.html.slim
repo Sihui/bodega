@@ -1,0 +1,7 @@
+button Add
+= form_with url: send("company_#{scope}s_path", @company),
+            scope: scope,
+            class: "ui-front" do |f|
+  = f.text_field :name, class: "ui-autocomplete-input"
+  = f.hidden_field :id
+  button Cancel

@@ -1,0 +1,2 @@
+- if @company.requests_pending_admin.any?
+  p = pluralize(@company.requests_pending_admin.count, 'membership request')

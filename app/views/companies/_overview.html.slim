@@ -1,0 +1,7 @@
+#company_details.form_rendered
+  = render "companies/details"
+- if current_user.is_admin?(@company)
+  #edit_company.form_container
+    = render partial: "companies/form", locals: { action: "Edit" }
+
+p#staff_size #{pluralize(@company.confirmed_members.count, 'staff member')}
