@@ -1,14 +1,14 @@
 class OrderParams < ActionController::Parameters
   def initialize(params = {})
-    params = params.permit(params.keys).to_h if params.respond_to?(:permitted?)
+    params = params.permit!.to_h if params.respond_to?(:permitted?)
     super params
     @order = Order.find_by(id: params[:id]) if params.key?(:id)
     convert_line_items
   end
 
   def for_creation_by(user)
-    permit(:supplier_id, :purchaser_id, :notes,
-           line_items_attributes: [:order_id, :item_id, :qty])
+    permit(:supplier_id, :purchaser_id, :notes, :submitted,
+           line_items_attributes: [:id, :order_id, :item_id, :qty])
       .merge({ placed_by: user })
   end
 

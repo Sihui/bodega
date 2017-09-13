@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   def show; end
 
   def update
-    render status: @user.update(user_params) ? :ok : :unprocessable_entity
+    render status: :unprocessable_entity unless @user.update(user_params)
   end
 
   private

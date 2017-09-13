@@ -10,8 +10,20 @@ Project
 ## UP NEXT
 
 * clean up partials (move to appropriate folders)
-* company search box
 * place orders
+  user: selects company
+  page: hides company select, displays item search + empty order form
+
+  user: searches for item name, selects from autocomplete
+  page: resets item seach form, prepends item entry to order form
+
+  user: clicks "remove" on item in order form
+  page: removes item
+
+  user: submits order
+  page: accepts order, displays confirmation, notifies supplier
+
+  In raw HTML, we have an order form with separate fields each representing a single OrderItem...
 
 ## LATER
 

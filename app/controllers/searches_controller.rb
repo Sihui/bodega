@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
   before_action :authenticate_user!
 
-  def show
+  def create
     @search = search_params.to_h
     @search[:model] = Object.const_get(@search[:model].capitalize)
 
@@ -15,7 +15,7 @@ class SearchesController < ApplicationController
 
   private
     def search_params
-      params.require(:search).permit(:model, :query, filters: [:of, :as])
+      params.require(:search).permit(:model, :query, filters: [:of, :as, :from, :for])
         .tap { |p| p.reverse_merge!(filters: {}) }
     end
 

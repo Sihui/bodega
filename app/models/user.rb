@@ -24,6 +24,10 @@ class User < ApplicationRecord
     company.save && company.add_member(self, admin: true)
   end
 
+  def create_company(params)
+    Company.create(params).add_member(self, admin: true)
+  end
+
   def belongs_to?(company)
     companies.include?(company) && Commitment.between(self, company).confirmed?
   end
@@ -50,5 +54,9 @@ class User < ApplicationRecord
 
   def requests_pending_company
     commitments.select(&:pending_admin_conf?)
+  end
+
+  def suppliers
+    companies.map(&:suppliers).flatten.uniq
   end
 end

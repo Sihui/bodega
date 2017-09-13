@@ -50,10 +50,11 @@ BODEGA.HiddenForm = function(selector, options) {
     this._attachListeners();
     if (options && options.search) {
       var that = this;
-      new BODEGA.Autocomplete(that.form, options.search, function(event, ui) {
-        that.form.find('.ui-autocomplete-input').val(ui.item.name)
-          .next().val(ui.item.id);
-        that.form.submit();
+      new BODEGA.Autocomplete(that.form, options.search, {
+        select: function(event, ui) {
+          $(this).val(ui.item.name).next().val(ui.item.id);
+          $(this).parent().submit();
+        }
       });
     }
   }
@@ -100,24 +101,29 @@ BODEGA.HiddenForm.prototype = {
       // Reset form field hints
       that._resetHints();
 
+      // Reset form buttons
+      that.form.children('.actions').children().removeAttr('disabled');
+
       // Display flash message
       if (data.flash) {
         BODEGA.flash.display(data.flash);
       }
 
       // Rerender content
-      data.rerender = [].concat(data.rerender);
+      if (data.rerender) {
+        data.rerender = [].concat(data.rerender);
 
-      for (var i = 0; i < data.rerender.length; i++) {
-        if ('replace' in data.rerender[i] && 'with' in data.rerender[i]) {
-          eval(data.rerender[i].replace).empty().append(data.rerender[i].with);
-        } else if ('append' in data.rerender[i] && 'to' in data.rerender[i]) {
-          eval(data.rerender[i].to).append(data.rerender[i].append);
+        for (var i = 0; i < data.rerender.length; i++) {
+          if ('replace' in data.rerender[i] && 'with' in data.rerender[i]) {
+            eval(data.rerender[i].replace).empty().append(data.rerender[i].with);
+          } else if ('append' in data.rerender[i] && 'to' in data.rerender[i]) {
+            eval(data.rerender[i].to).append(data.rerender[i].append);
 
-          // Attach new listeners
-          if (data.rerender[i].needsListeners) {
-            var newForm = eval(data.rerender[i].to).children().last().get(0);
-            if (! $._data(newForm, 'events')) { new BODEGA.HiddenForm($(newForm)); }
+            // Attach new listeners
+            if (data.rerender[i].needsListeners) {
+              var newForm = eval(data.rerender[i].to).children().last().get(0);
+              if (! $._data(newForm, 'events')) { new BODEGA.HiddenForm($(newForm)); }
+            }
           }
         }
       }
