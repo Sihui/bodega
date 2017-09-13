@@ -1,4 +1,9 @@
 h3 = link_to "Bodega", root_path
+
+- if user_signed_in?
+  #companies_search
+    = render "companies/searches/form"
+
 ul
   - if user_signed_in?
     li = link_to "Your Profile", user_path
@@ -6,7 +11,7 @@ ul
       li
         | Your Companies
         ul#nav__companies
-          = render partial: 'companies/li', collection: current_user.confirmed_companies, as: :company
+          = render partial: "companies/li", collection: current_user.confirmed_companies, as: :company
     hr
     li Settings
     li = link_to "Sign Out", destroy_account_session_path, method: :delete

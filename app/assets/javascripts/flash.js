@@ -9,8 +9,14 @@ BODEGA.flash = {
     }
   },
 
+  // TODO fix this
+  fadeOut: function() {
+    this.reset();
+  },
+
   display: function(flashHash) {
     this.reset();
     this.append(flashHash);
-  },
+    window.setTimeout(this.fadeOut.bind(this), 5000)
+  }
 };

@@ -9,21 +9,18 @@ class CompaniesController < ApplicationController
   def show
   end
 
-  def new
-    @company = Company.new
-  end
-
   # responds ONLY with JSON
   def create
     @company = Company.new(company_params)
 
-    render status: current_user.save_company(@company) ? :created : :unprocessable_entity
+    render status: \
+      current_user.save_company(@company) ? :created : :unprocessable_entity
   end
 
   def update
     redirect_to @company and return unless @company.admin?(current_user)
 
-    render status: @company.update(company_params) ? :ok : :unprocessable_entity
+    render status: :unprocessable_entity unless @company.update(company_params)
   end
 
   def destroy

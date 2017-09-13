@@ -1,6 +1,5 @@
 class Order < ApplicationRecord
-  before_create :generate_invoice
-  after_save :update_total
+  after_touch :update_total
   belongs_to :supplier,    class_name: :Company
   belongs_to :purchaser,   class_name: :Company
   belongs_to :placed_by,   class_name: :User
@@ -12,10 +11,14 @@ class Order < ApplicationRecord
   validates :discount_type, inclusion: { in: %w(fixed percentage) }, allow_nil: true
   validate :meta_associations
 
+  before_save :submission_init,
+    if: -> (order) { order.changes[:submitted] == [false, true] }
+
   def update_total
+    reload
     subtotal = line_items.map(&:line_total).compact.reduce(&:+)
     total    = apply_discount(subtotal)
-    update_column(:total, total)
+    update(total: total)
   end
 
   def confirmed?
@@ -76,5 +79,10 @@ class Order < ApplicationRecord
         unless placed_by&.belongs_to?(purchaser)
       errors.add(:accepted_by, 'must be a member of order supplier') \
         unless accepted_by.nil? || accepted_by.belongs_to?(supplier)
+    end
+
+    def submission_init
+      generate_invoice
+      assign_attributes(created_at: DateTime.now)
     end
 end

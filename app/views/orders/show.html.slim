@@ -1,15 +1,24 @@
-p#notice = notice
+h1 Order Summary
+p Order ##{@order.invoice_no}
+p #{@order.created_at.to_s(:long)}
 
-p
-  strong Supplier:
-  = @order.supplier
-p
-  strong Purchaser:
-  = @order.purchaser
-p
-  strong Invoice:
-  = @order.invoice
+table
+  thead
+    tr
+      td item
+      td qty
+      td price
+      td total
+  tbody
+    - @order.line_items.each do |li|
+      tr
+        td #{li.item.name}
+        td #{li.qty}
+        td #{li.price}元/#{li.item.unit_size}
+        td #{li.line_total}元
+    tr
+      td[colspan="3"]
+      td#total: strong #{@order.total}元
 
-= link_to 'Edit', edit_order_path(@order)
-'  |
-= link_to 'Back', orders_path
+h2 Notes
+p #{@order.notes}

@@ -87,8 +87,9 @@ ActiveRecord::Schema.define(version: 20170817071646) do
     t.integer "purchaser_id", null: false
     t.integer "placed_by_id", null: false
     t.integer "accepted_by_id"
-    t.string "invoice_no", null: false
-    t.integer "total"
+    t.string "invoice_no"
+    t.boolean "submitted", default: false, null: false
+    t.integer "total", default: 0, null: false
     t.integer "discount"
     t.string "discount_type"
     t.text "notes"
@@ -97,8 +98,8 @@ ActiveRecord::Schema.define(version: 20170817071646) do
     t.index ["accepted_by_id"], name: "index_orders_on_accepted_by_id"
     t.index ["placed_by_id"], name: "index_orders_on_placed_by_id"
     t.index ["purchaser_id"], name: "index_orders_on_purchaser_id"
+    t.index ["supplier_id", "invoice_no"], name: "index_orders_on_supplier_id_and_invoice_no", unique: true
     t.index ["supplier_id"], name: "index_orders_on_supplier_id"
-    t.index [nil, "invoice_no"], name: "index_orders_on_supplier_and_invoice_no", unique: true
   end
 
   create_table "supply_links", force: :cascade do |t|

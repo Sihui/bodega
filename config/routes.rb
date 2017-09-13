@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  # Search ---------------------------------------------------------------------
+  resource :search, only: :create
+  namespace :companies do
+    resource :search, only: [:create, :show]
+  end
+
   # Main Resources -------------------------------------------------------------
   resource :user, only: [:show, :update]
   resources :companies, except: [:index, :new, :edit] do
@@ -6,11 +12,14 @@ Rails.application.routes.draw do
     resources :supply_links, only: [:destroy]
     resources :purchasers, only: [:create, :update], controller: 'supply_links/purchasers'
     resources :suppliers, only: [:create, :update], controller: 'supply_links/suppliers'
+    namespace :items do
+      resource :search, only: [:create]
+    end
     resources :items, only: [:create, :update, :destroy]
   end
-  resources :orders
-
-  get '/search', to: 'searches#show'
+  resources :orders do
+    resources :line_items, only: [:create, :update, :destroy]
+  end
 
   # namespace :reports do
   #   resources :transactions, only: [:index, :show]
@@ -31,8 +40,9 @@ Rails.application.routes.draw do
   get '/account', to: redirect('/join')
 
   # Static pages ---------------------------------------------------------------
+  root 'dashboards#show'
+
   HighVoltage.configure do |config|
     config.route_drawer = HighVoltage::RouteDrawers::Root
-    config.home_page    = 'home'
   end
 end

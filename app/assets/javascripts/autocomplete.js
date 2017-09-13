@@ -1,11 +1,10 @@
-BODEGA.Autocomplete = function(form, search, select) {
+BODEGA.Autocomplete = function(form, search, callbacks) {
   search.filters = search.filters || {};
-
-  form.find('.ui-autocomplete-input').autocomplete({
-    select: select,
+  callbacks = callbacks || {};
+  init_options = Object.assign(callbacks, {
     source: function(req, res) {
       $.ajax({
-        type:    'GET',
+        type:    'POST',
         url:     '/search',
         data:    { search: { model: search.model,
                              query: req.term,
@@ -15,4 +14,7 @@ BODEGA.Autocomplete = function(form, search, select) {
       });
     }
   });
+
+
+  form.find('.ui-autocomplete-input').autocomplete(init_options);
 };

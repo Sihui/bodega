@@ -1,0 +1,10 @@
+h2 Recent Orders
+- Order.where('placed_by_id = ? AND submitted = ?', current_user.id, true) \
+       .order('created_at desc').limit(5).each do |o|
+         h3 = link_to(o.invoice_no, o)
+         p #{o.created_at.to_s(:long)}
+         ul
+           - o.line_items.each do |li|
+             li #{li.qty} x #{li.item.name} (#{li.item.unit_size})
+
+= button_to "Place an order", new_order_path, method: :get

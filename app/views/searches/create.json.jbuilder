@@ -11,4 +11,10 @@ when User
     json.value(user.name)
     json.id(user.id)
   end
+when Item
+  json.array!(@search[:results]) do |item|
+    json.label("#{item.name} (#{item.price}元/#{item.unit_size})")
+    json.value(item.name)
+    json.id(item.id)
+  end
 end
