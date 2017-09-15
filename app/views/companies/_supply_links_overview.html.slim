@@ -1,0 +1,14 @@
+h2 #{role.capitalize}s
+
+div[id="pending_#{role}_summary"]
+  = render partial: "companies/supply_links_pending", locals: { their_role: role }
+
+div[id="#{role}_index"]
+  = render partial: "companies/supply_link_snippet",
+           collection: @company.send("confirmed_#{role}s"),
+           as: :them,
+           locals: { their_role: role }
+
+- if current_user.is_admin?(@company)
+  div[id="add_#{role}" class="form_container"]
+    = render partial: "companies/supply_link_form", locals: { scope: role }

@@ -8,16 +8,23 @@ class User < ApplicationRecord
   has_many :companies, through: :commitments
 
   def self.search(query, filters = {})
-    results = where('LOWER(name) LIKE ?', "%#{query}%")
+    sql = ["LOWER(name) LIKE :query"]
+    params = { query: "%#{query}%" }
 
     if (filters.keys & %w(of as)).length == 2
       company = Company.find_by(name: filters['of'])
 
-      if filters.dig('as') == 'new_member'
-        filter  = company.users.pluck(:id)
-        results = results.where('id NOT IN (?)', filter)
+      case filters['as']
+      when "new_member"
+        sql << "id NOT IN (:ids)"
+        params[:ids] = company.users.pluck(:id)
+      when "member"
+        sql << "id IN (:ids)"
+        params[:ids] = company.users.pluck(:id)
       end
     end
+
+    where(sql.join(" AND "), params)
   end
 
   def save_company(company)

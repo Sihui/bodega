@@ -1,0 +1,237 @@
+// 1) Settings -----------------------------------------------------------------
+// 2) Tools --------------------------------------------------------------------
+// 3) Generic ------------------------------------------------------------------
+.hidden { display: none; }
+.ui-helper-hidden-accessible { display: none; }
+
+// 4) Base ---------------------------------------------------------------------
+html {
+  font-size: 16px;
+}
+
+body {
+  background-color: hsl(9, 70%, 35%);
+  color: #333;
+  margin: 0;
+  padding: 0;
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+p, ol, ul, td {
+  font-family: verdana, arial, helvetica, sans-serif;
+  font-size: 13px;
+  line-height: 18px;
+}
+
+pre {
+  background-color: #eee;
+  padding: 10px;
+  font-size: 11px;
+}
+
+a {
+  color: #000;
+
+  &:visited {
+    color: #666;
+  }
+
+  &:hover {
+    color: #fff;
+    background-color: #000;
+  }
+}
+
+th {
+  padding-bottom: 5px;
+}
+
+td {
+  padding: 0 5px 7px;
+}
+
+#notice {
+  color: green;
+}
+
+.field_with_errors {
+  padding: 2px;
+  background-color: red;
+  display: table;
+}
+
+#error_explanation {
+  width: 450px;
+  border: 2px solid red;
+  padding: 7px 7px 0;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+
+  h2 {
+    text-align: left;
+    font-weight: bold;
+    padding: 5px 5px 5px 15px;
+    font-size: 12px;
+    margin: -7px -7px 0;
+    background-color: #c00;
+    color: #fff;
+  }
+
+  ul li {
+    font-size: 12px;
+    list-style: square;
+  }
+}
+
+label {
+  display: block;
+}
+
+button, input[type="submit"] {
+  cursor: pointer;
+}
+
+// 5) Objects ------------------------------------------------------------------
+// 6) Components ---------------------------------------------------------------
+header {
+  position: absolute;
+  width: 100%;
+  max-height: 4rem;
+  padding: 1rem 0;
+  color: white;
+  background-color: #222;
+
+  > nav {
+    margin: auto;
+    padding: 0 4rem;
+    max-width: 60rem;
+    height: 2rem;
+
+    > #nav__home {
+      float: left;
+      padding-left: 2.5rem;
+      height: 100%;
+      line-height: 2rem;
+      background-image: url("/assets/bodega.svg");
+      background-position: left;
+      background-size: 2rem;
+      background-repeat: no-repeat;
+      margin-right: 1rem;
+      font-family: "Raleway", sans-serif;
+      font-size: 1.5rem;
+      color: #fff;
+      text-decoration: none;
+    }
+
+    > #nav__companies {
+      float: left;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 1.7rem;
+
+      *:not(.hidden) {
+        display: inline-block;
+        height: 100%;
+      }
+
+      > .form_container {
+        > button {
+          border-radius: 3px;
+          border: none;
+          background-image: linear-gradient(0deg, #eff3f6 10%, #fafbfc 100%);
+        }
+
+        > form {
+          button {
+            border-top-left-radius: 3px;
+            border-bottom-left-radius: 3px;
+            border: none;
+            background-color: #555;
+            color: #ddd;
+
+            &:hover {
+              background-color: #666;
+            }
+          }
+
+          input[name="q"] {
+            box-sizing: border-box;
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+            border: none;
+            padding: 0.3rem;
+          }
+        }
+      }
+    }
+
+    > #nav__user {
+      float: right;
+      position: relative;
+
+      > #nav__user_badge {
+        cursor: pointer;
+        width: 2rem;
+        height: 2rem;
+        line-height: 2rem;
+        border-radius: 3px;
+        background-color: hsl(199, 100%, 75%);
+        text-align: center;
+        font-weight: 700;
+        font-size: 1.35rem;
+        font-family: 'Raleway', sans-serif;
+      }
+
+      > #nav__user_menu {
+        background-color: white;
+        box-shadow: 0 0 0.5rem 3px hsla(210, 13%, 12%, 0.15);
+        border-radius: 3px;
+        border: 1px solid #ccc;
+        color: #333;
+        position: absolute;
+        right: 0;
+        list-style: none;
+        padding: 0.5rem 1rem;
+
+        ::before {
+         content:"";
+         position: absolute;
+         right: 0.5rem;
+         bottom: 100%;
+         width: 0;
+         height: 0;
+         border-left: 0.4rem solid transparent;
+         border-bottom: 0.4rem solid #fff;
+         border-right: 0.4rem solid transparent;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+        }
+
+        li {
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+}
+
+#content {
+  background-color: hsl(60, 30%, 99%);
+  margin: 0 auto;
+  padding: 0 4rem;
+  max-width: 60rem;
+  min-height: 100vh;
+  padding-top: 5rem;
+}
+
+.supplier, .purchaser {
+  display: inline-block;
+}
+
+// 7) Trumps -------------------------------------------------------------------

@@ -1,12 +1,11 @@
+@order = @line_item.order
 if @line_item.persisted?
   order = @line_item.order.reload
   json.rerender([{ replace: "$('#cart')",
-                   with: render(partial: "line_items/order_form",
-                                object: order,
-                                as: :order),
+                   with: render(partial: "orders/form"),
                    needsListeners: true },
                  { replace: "$('#total > strong')",
-                   with: "#{order.total}元" }])
+                   with: "#{@order.total}元" }])
 else
   json.flash({ alert: "#{@line_item.item.name} #{@line_item.errors.messages[:item].join(' / ')}"})
 end

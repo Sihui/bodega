@@ -15,7 +15,7 @@ class SearchesController < ApplicationController
 
   private
     def search_params
-      params.require(:search).permit(:model, :query, filters: [:of, :as, :from, :for])
+      params.require(:search).permit(:model, :query, filters: [:of, :as, :from, :for, :with, :placed_by, :submitted])
         .tap { |p| p.reverse_merge!(filters: {}) }
     end
 

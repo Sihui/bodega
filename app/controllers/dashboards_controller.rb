@@ -1,5 +1,6 @@
 class DashboardsController < ApplicationController
   def show
-    render "pages/home" unless user_signed_in?
+    @user = current_user if user_signed_in?
+    render @user ? "users/show" : "pages/home"
   end
 end

@@ -1,18 +1,28 @@
-= form_for @order do |f|
-  - if @order.errors.any?
-    #error_explanation
-      h2 = "#{pluralize(@order.errors.count, "error")} prohibited this order from being saved:"
-      ul
-        - @order.errors.full_messages.each do |message|
-          li = message
+- @order ||= order
+= form_with model: @order, id: :order_details, method: :patch, local: true do |f|
+  = f.hidden_field :submitted, value: true
+  = hidden_field_tag :update_action, "creation"
+  h2 Your Cart
+  table#item_summary
+    thead
+      tr
+        td item
+        td qty
+        td price
+        td total
+    tbody
+      = f.fields_for :line_items do |ff|
+        tr
+          td.item_name #{ff.object.item.name}
+          td.item_qty #{ff.number_field :qty}
+          td.item_price #{ff.object.price}元/#{ff.object.item.unit_size}
+          td.item_total #{ff.object.line_total}元
+      tr
+        td[colspan="3"]
+        td#total: strong #{@order.total}元
 
   .field
-    = f.label :supplier
-    = f.text_field :supplier
-  .field
-    = f.label :purchaser
-    = f.text_field :purchaser
-  .field
-    = f.label :invoice_no
-    = f.text_field :invoice_no
-  .actions = f.submit
+    = f.label :notes
+    = f.text_area :notes, id: :order_notes
+
+  = f.submit "Submit"

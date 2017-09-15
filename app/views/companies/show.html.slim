@@ -1,24 +1,24 @@
 #company_overview[data-resource="company"]
-  = render "companies/overview"
+  = render "overview"
 
 #join_company
-  = render "companies/join_button"
+  = render "join_button"
 
 / Inventory --------------------------------------------------------------------
 - if current_user.is_purchaser?(@company) || current_user.belongs_to?(@company)
   #inventory_overview[data-resource="item"]
-    = render partial: "items/overview"
+    = render "item_overview"
 
 / Supply Links -----------------------------------------------------------------
 - if current_user.belongs_to?(@company)
   #supply_link_index
     #purchasers_overview
-      = render partial: "supply_links/overview", locals: { role: :purchaser }
+      = render partial: "companies/supply_links_overview", locals: { role: :purchaser }
 
     #suppliers_overview
-      = render partial: "supply_links/overview", locals: { role: :supplier }
+      = render partial: "companies/supply_links_overview", locals: { role: :supplier }
 
 / Members ----------------------------------------------------------------------
 - if current_user.is_admin?(@company)
   #members_overview
-    = render "companies/member_overview"
+    = render "member_overview"

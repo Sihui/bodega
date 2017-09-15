@@ -14,6 +14,46 @@ class Order < ApplicationRecord
   before_save :submission_init,
     if: -> (order) { order.changes[:submitted] == [false, true] }
 
+  def self.search(_, filters)
+    sql = []
+    params = {}
+
+    if filters.keys.include?("with")
+      sql << "(supplier_id = :supplier_id)"
+
+      params[:supplier_id] = (filters["with"] =~ /^\d+$/) ?
+        filters["with"] : Company.search(filters["with"]).first.id
+    end
+
+    if filters.keys.include?("from")
+      sql << "(purchaser_id = :purchaser_id)"
+
+      params[:purchaser_id] = (filters["from"] =~ /^\d+$/) ?
+        filters["from"] : Company.search(filters["from"]).first.id
+    end
+
+    if filters.keys.include?("placed_by")
+      sql << "(placed_by_id = :placed_by_id)"
+
+      params[:placed_by_id] = 
+        if filters["placed_by"] =~ /^\d+$/
+          filters["placed_by"]
+        else
+          filters = params.keys.include?("purchaser_id") ?
+            { as: :member, of: Company.find_by(id: params[:purchaser_id]) } : {}
+          User.search(filters["placed_by"], filters).first.id
+        end
+    end
+
+    if filters.keys.include?("submitted")
+      sql << "(submitted = :submitted)"
+
+      params[:submitted] = (filters["submitted"].to_s == "true")
+    end
+
+    where(sql.join(" AND "), params)
+  end
+
   def update_total
     reload
     subtotal = line_items.map(&:line_total).compact.reduce(&:+)

@@ -20,14 +20,14 @@
     = f.hidden_field :item_id
 
   #cart
-    = render partial: "line_items/order_form"
+    = render partial: "form"
 
-  = button_to("Start over", "", id: :start_over, remote: true, method: :delete)
+  = button_to("Discard", "", id: :discard, remote: true, method: :delete)
 
 / user: selects company
 / page: hides company select, displays item search + empty order form
 
-/ page needs: company select menu, item search, order form, "start over" button
+/ page needs: company select menu, item search, order form, "discard" button
 
 / order form points to orders#update (Order.update(submitted: true))
 / item search points to /items/search API endpoint (provides `json.rerender`)
@@ -39,7 +39,7 @@
 /     - Order#create
 /     - populate order form id field
 /     - initialize autocomplete on item search box
-/   - start over button:
+/   - discard button:
 /     - toggle visibility of everything
 /     - destroy autocomplete on item search box
 /     - Order#destroy

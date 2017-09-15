@@ -9,8 +9,10 @@ html
     = javascript_include_tag 'application', "data-turbolinks-track": "reload"
   body[data-controller=controller_path data-action=action_name]
     header
-      = render "shared/nav"
+      nav
+        = render "shared/nav"
     #flash
       - flash.each do |type, msg|
         p[id="#{type}"] #{msg}
-    = yield
+    #content
+      = yield

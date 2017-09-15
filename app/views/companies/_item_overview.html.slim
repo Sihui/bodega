@@ -1,6 +1,6 @@
 h2 Inventory
 p#inventory_size
-  = render partial: "items/count", object: @company, as: :company
+  = render partial: "companies/item_count"
 
 #item_list.form_rendered
   = render partial: "items/snippet", collection: @company.items, as: :item

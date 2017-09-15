@@ -18,11 +18,11 @@ class Company < ApplicationRecord
   accepts_nested_attributes_for :commitments
 
   def self.search(query, filters = {})
-    sql = "(LOWER(name) LIKE :query OR LOWER(code) LIKE :query)"
+    sql = ["(LOWER(name) LIKE :query OR LOWER(code) LIKE :query)"]
     params = { query: "%#{query}%" }
 
     if (filters.keys & %w(of as)).length == 2
-      sql << " AND (id IS NOT :us) AND (id NOT IN (:them))"
+      sql << "(id IS NOT :us) AND (id NOT IN (:them))"
 
       us = find_by(name: filters["of"])
       case filters["as"]
@@ -36,7 +36,7 @@ class Company < ApplicationRecord
       params[:them] << 0 if params[:them].empty?
     end
 
-    where(sql, params)
+    where(sql.join(" AND "), params)
   end
 
   def admin?(user)

@@ -1,9 +1,8 @@
+@order = @line_item.order
 if @line_item.changes.none?
   order = @line_item.order.reload
   json.rerender([{ replace: "$('#cart')",
-                   with: render(partial: "line_items/order_form",
-                                object: order,
-                                as: :order),
+                   with: render(partial: "orders/form"),
                    needsListeners: true },
                  { replace: "$('#total > strong')",
                    with: "#{order.total}元" }])
