@@ -1,5 +1,5 @@
 # Change these
-server '172.104.62.110', port: 80, roles: [:web, :app, :db], primary: true
+server '172.104.62.110', port: 22, roles: [:web, :app, :db], primary: true
 
 set :repo_url,        'git@github.com:rlue/bodega.git'
 set :application,     'bodega'
