@@ -22,6 +22,7 @@ RSpec.describe SupplyLink, type: :model do
   end
 
   describe 'association methods' do
+    include_context 'roster'
     it 'has ::between (happy path)' do
       expect(SupplyLink.between(acme, buynlarge)).to be_present
     end
@@ -29,9 +30,18 @@ RSpec.describe SupplyLink, type: :model do
     it 'has ::between (no false negatives)' do
       expect(SupplyLink.between(acme, zorg)).not_to be_present
     end
+
+    it 'has ::for (happy path)' do
+      expect(SupplyLink.for(supplier: acme, purchaser: cyberdyne)).to be_present
+    end
+
+    it 'has ::for (no false negatives)' do
+      expect(SupplyLink.for(supplier: acme, purchaser: buynlarge)).not_to be_present
+    end
   end
 
   describe 'confirmability' do
+    include_context 'roster'
     it 'has #confirmed? (happy path)' do
       expect(SupplyLink.between(acme, buynlarge).confirmed?).to be(true)
     end

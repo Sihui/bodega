@@ -1,0 +1,4 @@
+- if @user.confirmed_companies.any?
+  = render partial: "companies/snippet", collection: @user.confirmed_companies, as: :company
+- else
+  p You don't belong to any companies yet!

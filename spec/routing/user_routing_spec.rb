@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'devise user routing', type: :routing do
+RSpec.describe 'devise account routing', type: :routing do
   it 'includes sessions#new' do
     expect(get: '/sign_in').to route_to('devise/sessions#new')
   end
@@ -14,34 +14,42 @@ RSpec.describe 'devise user routing', type: :routing do
   end
 
   it 'includes passwords#new' do
-    expect(get: '/reset_password').to route_to('devise/passwords#new')
+    expect(get: '/password/new').to route_to('devise/passwords#new')
   end
 
   it 'includes passwords#create' do
-    expect(post: '/reset_password').to route_to('devise/passwords#create')
+    expect(post: '/password').to route_to('devise/passwords#create')
+  end
+
+  it 'includes passwords#edit' do
+    expect(get: '/password/edit').to route_to('devise/passwords#edit')
+  end
+
+  it 'includes passwords#update (via PATCH)' do
+    expect(patch: '/password').to route_to('devise/passwords#update')
+  end
+
+  it 'includes passwords#update (via PUT)' do
+    expect(put: '/password').to route_to('devise/passwords#update')
   end
 
   it 'includes registrations#new' do
-    expect(get: '/sign_up').to route_to('devise/registrations#new')
-  end
-
-  it 'includes registrations#edit' do
-    expect(get: '/user/edit').to route_to('devise/registrations#edit')
-  end
-
-  it 'includes registrations#show' do
-    expect(get: '/user').to route_to('devise/registrations#show')
+    expect(get: '/join').to route_to('devise/registrations#new')
   end
 
   it 'includes registrations#update (via PATCH)' do
-    expect(patch: '/user').to route_to('devise/registrations#update')
+    expect(patch: '/account').to route_to('devise/registrations#update')
+  end
+
+  it 'includes registrations#update (via PUT)' do
+    expect(put: '/account').to route_to('devise/registrations#update')
   end
 
   it 'includes registrations#destroy' do
-    expect(delete: '/user').to route_to('devise/registrations#destroy')
+    expect(delete: '/account').to route_to('devise/registrations#destroy')
   end
 
   it 'includes registrations#create' do
-    expect(post: '/user').to route_to('devise/registrations#create')
+    expect(post: '/account').to route_to('devise/registrations#create')
   end
 end

@@ -1,88 +1,83 @@
 Project
 ================================================================================
 
-## Layout
+## RIGHT NOW
 
-### `application.html.slim`
+* add “cancel” buttons to confirmation dialogs for memberships and supply links
+* add “admin” checkbox for adding new members
+* add delete buttons for various resources (where should they go?)
 
-* TODO include header with navigation links
+## UP NEXT
 
-## API
+* clean up partials (move to appropriate folders)
+* place orders
+  user: selects company
+  page: hides company select, displays item search + empty order form
 
-### Static
+  user: searches for item name, selects from autocomplete
+  page: resets item seach form, prepends item entry to order form
 
-* `GET    /home(.:format)                redirect(301, /)`
-  * [Override High Voltage controller][hv]
-    * TODO shows landing page if no `current_user`
-    * TODO shows dashboard if logged in
+  user: clicks "remove" on item in order form
+  page: removes item
 
-### Companies
+  user: submits order
+  page: accepts order, displays confirmation, notifies supplier
 
-* `GET    /companies(.:format)          companies#index`
-  * TODO shows a listing of companies
-* `POST   /companies(.:format)          companies#create`
-  * TODO creates company record
-  * TODO creates owner-level commitment from `current_user`
-  * TODO redirects to ???
-* `GET    /companies/new(.:format)      companies#new`
-  * TODO shows new company form
-* `GET    /companies/:id/edit(.:format) companies#edit`
-  * TODO shows edit company form
-* `GET    /companies/:id(.:format)      companies#show`
-  * TODO shows company profile
-* `PATCH  /companies/:id(.:format)      companies#update`
-  * TODO updates company record
-  * TODO redirects to ???
-* `DELETE /companies/:id(.:format)      companies#destroy`
-  * TODO destroys company record
-  * TODO redirects to ???
+  In raw HTML, we have an order form with separate fields each representing a single OrderItem...
 
-### Users
+## LATER
 
-* `GET    /sign_in(.:format)             devise/sessions#new`
-* `POST   /sign_in(.:format)             devise/sessions#create`
-* `DELETE /sign_out(.:format)            devise/sessions#destroy`
-* `GET    /reset_password(.:format)      devise/passwords#new`
-* `POST   /reset_password(.:format)      devise/passwords#create`
-* `GET    /sign_up(.:format)             devise/registrations#new`
-* `GET    /user/edit(.:format)           devise/registrations#edit`
-* `GET    /user(.:format)                devise/registrations#show`
-* `PATCH  /user(.:format)                devise/registrations#update`
-* `DELETE /user(.:format)                devise/registrations#destroy`
-* `POST   /user(.:format)                devise/registrations#create`
+* rename `Company#users` to `Company#members`
+* Routes: duplicate URLs with `as: ''`?
+* [Override High Voltage controller][hv]
+  * TODO shows landing page if no `current_user`
+  * TODO shows dashboard if logged in
+* implement garber-irish DOM-ready javascript
 
-### Commitments
+### Reevaluate design
 
-What is the procedure?
+* TODO company code validation rules
+* TODO invoice number formatting rules
+* TODO referential integrity, e.g., for when a user wants to remove an
+       item which was referenced in previous orders (and is thus blocked)
 
-* User logs in
-* goes to company page
-* clicks “add members”
-* searches for members (by name or email)
-* selects a user, then confirms
-* hits API endpoint: commitments#create
-* creates unconfirmed commitment with auth-pending user ID
-* notifies user of request (via email and in dashboard)
-* user hits API endpoint: commitments#confirm
-* commitment is created/activated
+### Orders Schema
 
-API endpoint needs to know: `company`, `member`, `admin?`, `member_confirmed?`, `admin_confirmed?`
+Have a status: open, modified (pending confirmation), confirmed, delivered, flagged (for review)
 
-* `GET    /companies/:id/members(.:format)      commitments#index`
-* `POST   /companies/:id/members(.:format)      commitments#create`
-* `PATCH  /companies/:id/members/:id(.:format)  commitments#update`
-* `DELETE /companies/:id/members/:id(.:format)  commitments#destroy`
+* define cascading **tiers** of users to be notified of pending orders
 
-## Look up later
+|         | purchaser        | supplier                                        |
+| ------- | ---------------- | ----------------------------------------------- |
+| create  | yes (record who) | no                                              |
+| read    | yes              | yes                                             |
+| update  | update/dispute   | confirm/apply-discount/downsize/resolve-dispute |
+| destroy | cancel           | no                                              |
 
-  * Routes: duplicate URLs with `as: ''`?
+#### Database Tables
+
+1. Orders
+   * `supplier`
+   * `purchaser`
+   * `placed_by`
+   * `accepted_by`
+   * `invoice_no`
+   * `discount`
+   * `discount_type`
+   * `notes`
+2. LineItems
+   * `order`
+   * `item`
+   * `qty`
+   * `price`
+   * `total`
+   * `comped`
+   * `qty_disputed`
 
 Meta-Work
 ================================================================================
 
-## UML Diagrams
-
-  * TODO decide how important it is...
+## TODO UML Diagrams
 
 ### Resources
 
@@ -95,4 +90,3 @@ Meta-Work
 ---
 
 [hv]: https://github.com/thoughtbot/high_voltage#override
-

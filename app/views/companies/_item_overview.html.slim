@@ -1,0 +1,10 @@
+h2 Inventory
+p#inventory_size
+  = render partial: "companies/item_count"
+
+#item_list.form_rendered
+  = render partial: "items/snippet", collection: @company.items, as: :item
+
+#add_item.form_container
+  - if current_user.belongs_to?(@company)
+    = render partial: "items/form", locals: { action: "Add" }

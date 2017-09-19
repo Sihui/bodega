@@ -1,0 +1,6 @@
+h1 Company Search
+p
+  ' #{pluralize(@companies.count, 'result')}
+  - if params[:q].present?
+    ' for "#{params[:q]}"
+= render partial: "companies/snippet", collection: @companies, as: :company

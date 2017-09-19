@@ -1,9 +1,24 @@
-= form_for [@company, @item] do |f|
-  - if @item.errors.any?
-    #error_explanation
-      h2 = "#{pluralize(@item.errors.count, "error")} prohibited this item from being saved:"
-      ul
-        - @item.errors.full_messages.each do |message|
-          li = message
+- item ||= (@item || Item.new)
+- company ||= (@company || item.supplier)
 
-  .actions = f.submit
+button #{action}
+= form_with model: [company, item] do |f|
+  .field
+    = f.label 'Item Name'
+    = f.text_field :name
+
+  .field
+    = f.label 'Reference Code'
+    = f.text_field :ref_code
+
+  .field
+    = f.label 'Price'
+    = f.text_field :price
+
+  .field
+    = f.label 'Unit Size'
+    = f.text_field :unit_size
+
+  .actions
+    = f.submit
+    button Cancel

@@ -1,3 +1,29 @@
-h1 Welcome to the Bodega
+#splash
+  main
+    #splash__text
+      h1 Know how much you're owed.
+      p
+        ' Give your customers a way to place orders with you, and
+        ' get an itemized report of what they owe at the end of the
+        ' week/month/whenever.
+    #splash__signup
+      - account = Account.new
+      = form_with(model: account, url: account_registration_path, local: true) do |f|
+        - account.build_user
+        = f.fields_for :user do |ff|
+          .field
+            = ff.label :name
+            = ff.text_field :name, id: :account_user_attributes_name, autofocus: true
 
-p Order stuff from Toasteria's central kitchen.
+        .field
+          = f.label :email
+          = f.email_field :email, id: :account_email
+
+        .field
+          = f.label :password
+          = f.password_field :password, id: :account_password, autocomplete: "off"
+
+        .actions
+          = f.submit "Sign up"
+
+#tour_wrapper

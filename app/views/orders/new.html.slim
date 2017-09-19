@@ -1,0 +1,67 @@
+#banner
+  h1 New order
+  h2
+
+#company_select
+  #purchaser_select
+    h2 Place an order on behalf of...
+    = render partial: "orders/purchaser",
+             collection: current_user.companies
+
+  #supplier_select
+    h2 with...
+    = render partial: "orders/supplier",
+             collection: current_user.suppliers
+
+#order_form
+  = form_with url: "", id: :item_search, scope: :line_item do |f|
+    = f.label :item_name, "Item search"
+    = f.text_field :item_name, id: :item_name, class: "ui-autocomplete-input"
+    = f.hidden_field :item_id
+
+  #cart
+    = render partial: "form"
+
+  = button_to("Discard", "", id: :discard, remote: true, method: :delete)
+
+/ user: selects company
+/ page: hides company select, displays item search + empty order form
+
+/ page needs: company select menu, item search, order form, "discard" button
+
+/ order form points to orders#update (Order.update(submitted: true))
+/ item search points to /items/search API endpoint (provides `json.rerender`)
+/ controller:
+/   - detect if user has "draft" order. if so, offer to restore.
+/ javascript:
+/   - company select (auto-initialize if user only has one supplier)
+/     - toggle visibility of everything
+/     - Order#create
+/     - populate order form id field
+/     - initialize autocomplete on item search box
+/   - discard button:
+/     - toggle visibility of everything
+/     - destroy autocomplete on item search box
+/     - Order#destroy
+/   - item search box:
+/     - attach listener for ajax callbacks
+/       - success:
+/         - OrderItem#create
+/         - prepend item to order form
+/         - reset item search
+/       - error:
+/         - display flash message
+/         - reset item search
+/   - order item entries:
+/     - qty buttons/field -> OrderItem#update(qty: n)
+/     - delete button -> OrderItem#destroy
+/   - order form:
+
+/ user: searches for item name, selects from autocomplete
+/ page: resets item seach form, prepends item entry to order form
+
+/ user: clicks "remove" on item in order form
+/ page: removes item
+
+/ user: submits order
+/ page: accepts order, renders confirmation, notifies supplier

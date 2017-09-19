@@ -1,0 +1,12 @@
+nav
+  a#nav__home[href="#{root_path}"] Bodega
+
+  - if user_signed_in?
+    #nav__companies
+      = render "shared/nav/company_search"
+
+  #nav__user
+    - if user_signed_in?
+      = render "shared/nav/user_menu"
+    - else
+      = render "shared/nav/user_auth"

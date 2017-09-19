@@ -18,5 +18,9 @@ module Bodega
     config.generators do |g|
       g.test_framework :rspec, controller_specs: false
     end
+
+    # Autoload parameter helper classes
+    # http://guides.rubyonrails.org/autoloading_and_reloading_constants.html
+    config.autoload_paths << "#{Rails.root}/app/controllers/parameters"
   end
 end

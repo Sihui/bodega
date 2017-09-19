@@ -1,0 +1,5 @@
+- if @company.requests_pending_member.any?
+  p
+    ' #{pluralize(@company.requests_pending_member.count, "invitation")}
+    ' awaiting user confirmation
+    ' (#{@company.requests_pending_member.map(&:user).map(&:name).join(", ")})

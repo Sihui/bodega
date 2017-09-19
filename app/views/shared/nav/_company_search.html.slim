@@ -1,0 +1,8 @@
+.form_container
+  button Find a Company
+  = form_with url: companies_search_path, class: "ui-front" do |f|
+    = f.submit "Go", class: :hidden
+    button Cancel
+
+    = f.text_field :q, class: "ui-autocomplete-input", placeholder: "Search"
+    = f.hidden_field :id

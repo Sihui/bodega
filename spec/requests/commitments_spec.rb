@@ -7,32 +7,33 @@ require 'rails_helper'
 # PUT    /commitments/:id(.:format)                   commitments#update
 # DELETE /commitments/:id(.:format)                   commitments#destroy
 
-describe 'Commitments Endpoints', type: :request do
+RSpec.describe 'Commitments Endpoints', type: :request do
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       get company_commitments_path(acme)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to new_account_session_path
 
       post company_commitments_path(acme)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to new_account_session_path
 
       patch commitment_path(alice.commitments.first)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to new_account_session_path
 
       delete commitment_path(alice.commitments.first)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to new_account_session_path
     end
   end
 
   context 'with an admin user' do
-    before(:each) { sign_in alice }
+    before(:each) { sign_in alice.account }
 
     it 'shows index' do
+      pending "view creation"
       arthur
 
       get company_commitments_path(acme)
-      expect(response.body).to have_xpath("//a[@href='#{user_path(alice)}']")
-      expect(response.body).to have_xpath("//a[@href='#{user_path(arthur)}']")
+      expect(response.body).to have_xpath "//a[@href='#{user_path(alice)}']"
+      expect(response.body).to have_xpath "//a[@href='#{user_path(arthur)}']"
     end
 
     it 'adds new members (pending confirmation)' do
@@ -40,46 +41,47 @@ describe 'Commitments Endpoints', type: :request do
         post company_commitments_path(acme),
              params: { commitment: { user_id: zack.id } }
       end.to change(Commitment, :count).by(1)
-      expect(Commitment.between(zack, acme).confirmed?).to be(false)
+      expect(Commitment.between(zack, acme).confirmed?).to be false
 
-      expect(response).to redirect_to(company_path(acme))
+      expect(response).to redirect_to company_path(acme)
     end
 
     it 'cannot confirm member invitations' do
       expect do
         patch commitment_path(Commitment.between(andrew, acme)),
               params: { commitment: { pending_member_conf: false } }
-      end.not_to change { Commitment.between(andrew, acme).confirmed? }.from(false)
+      end.not_to change { Commitment.between(andrew, acme).confirmed? }.from false
 
-      expect(response).to redirect_to(company_path(acme))
+      expect(response).to redirect_to company_path(acme)
     end
 
     it 'updates existing members' do
       expect do
         patch commitment_path(Commitment.between(arthur, acme)),
           params: { commitment: { admin: true } }
-      end.to change { Commitment.between(arthur, acme).admin? }.to(true)
-      expect(response).to redirect_to(company_path(acme))
+      end.to change { Commitment.between(arthur, acme).admin? }.to true
+      expect(response).to redirect_to company_path(acme)
     end
 
     it 'deletes other members' do
       arthur
 
       expect { delete commitment_path(Commitment.between(arthur, acme)) }
-        .to change(Commitment, :count).by(-1)
-      expect(response).to redirect_to(company_path(acme))
+        .to change(Commitment, :count).by -1
+      expect(response).to redirect_to company_path(acme)
     end
   end
 
   context 'with a non-admin user' do
-    before(:each) { sign_in arthur }
+    before(:each) { sign_in arthur.account }
 
     it 'shows index' do
+      pending "view creation"
       alice
 
       get company_commitments_path(acme)
-      expect(response.body).to have_xpath("//a[@href='#{user_path(alice)}']")
-      expect(response.body).to have_xpath("//a[@href='#{user_path(arthur)}']")
+      expect(response.body).to have_xpath "//a[@href='#{user_path(alice)}']"
+      expect(response.body).to have_xpath "//a[@href='#{user_path(arthur)}']"
     end
 
     it 'cannot add new members' do
@@ -115,7 +117,7 @@ describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-member, invited user' do
-    before(:each) { sign_in andrew }
+    before(:each) { sign_in andrew.account }
 
     it 'diverts from the index' do
       get company_commitments_path(acme)
@@ -180,7 +182,7 @@ describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-member, requested user' do
-    before(:each) { sign_in amelia }
+    before(:each) { sign_in amelia.account }
 
     it 'diverts from the index' do
       get company_commitments_path(acme)
@@ -205,7 +207,7 @@ describe 'Commitments Endpoints', type: :request do
   end
 
   context 'with a non-member user' do
-    before(:each) { sign_in zack }
+    before(:each) { sign_in zack.account }
 
     it 'diverts from modifying other users’ memberships' do
       acme.add_member(amelia, pending: :member)

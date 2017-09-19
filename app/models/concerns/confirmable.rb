@@ -9,6 +9,10 @@
 module Confirmable
   extend ActiveSupport::Concern
 
+  def pending?
+    confirmers.any? { |confirmer| self.send("pending_#{confirmer}_conf?") }
+  end
+
   def confirmed?
     confirmers.none? { |confirmer| self.send("pending_#{confirmer}_conf?") }
   end

@@ -1,0 +1,24 @@
+h1 Order Summary
+p Order ##{@order.invoice_no}
+p #{@order.created_at.to_s(:long)}
+
+table
+  thead
+    tr
+      td item
+      td qty
+      td price
+      td total
+  tbody
+    - @order.line_items.each do |li|
+      tr
+        td #{li.item.name}
+        td #{li.qty}
+        td #{li.price}元/#{li.item.unit_size}
+        td #{li.line_total}元
+    tr
+      td[colspan="3"]
+      td#total: strong #{@order.total}元
+
+h2 Notes
+p #{@order.notes}

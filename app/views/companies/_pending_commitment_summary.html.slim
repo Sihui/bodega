@@ -1,0 +1,18 @@
+#membership_request_index
+  - if @company.requests_pending_admin.any?
+    #membership_request_count
+      = render "companies/membership_request_count"
+    - @company.requests_pending_admin.map(&:user).each do |m|
+      .membership_request_form
+        p #{m.name}
+        = button_to("Accept",
+                    commitment_path(Commitment.between(@company, m)),
+                    method: :patch,
+                    remote: true,
+                    params: { commitment: { pending_admin_conf: false } })
+        = button_to("Deny",
+                    commitment_path(Commitment.between(@company, m)),
+                    method: :delete,
+                    remote: true)
+#company_request_index
+  = render "companies/company_request_index"

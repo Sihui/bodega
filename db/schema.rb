@@ -10,7 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731061032) do
+ActiveRecord::Schema.define(version: 20170817071646) do
+
+  create_table "accounts", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "email", null: false
+    t.string "encrypted_password", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "sign_in_count", default: 0, null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string "current_sign_in_ip"
+    t.string "last_sign_in_ip"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_accounts_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_accounts_on_reset_password_token", unique: true
+    t.index ["user_id"], name: "index_accounts_on_user_id", unique: true
+  end
 
   create_table "commitments", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -27,7 +46,7 @@ ActiveRecord::Schema.define(version: 20170731061032) do
 
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
-    t.string "code"
+    t.string "code", null: false
     t.string "str_addr"
     t.string "city"
     t.datetime "created_at", null: false
@@ -49,27 +68,38 @@ ActiveRecord::Schema.define(version: 20170731061032) do
     t.index ["supplier_id"], name: "index_items_on_supplier_id"
   end
 
-  create_table "order_items", force: :cascade do |t|
+  create_table "line_items", force: :cascade do |t|
     t.integer "order_id", null: false
     t.integer "item_id", null: false
     t.integer "qty", default: 1, null: false
     t.integer "price", null: false
-    t.integer "total", null: false
-    t.index ["item_id"], name: "index_order_items_on_item_id"
-    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.integer "line_total", null: false
+    t.boolean "comped", default: false, null: false
+    t.integer "qty_disputed"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_line_items_on_item_id"
+    t.index ["order_id"], name: "index_line_items_on_order_id"
   end
 
   create_table "orders", force: :cascade do |t|
     t.integer "supplier_id", null: false
     t.integer "purchaser_id", null: false
+    t.integer "placed_by_id", null: false
+    t.integer "accepted_by_id"
+    t.string "invoice_no"
+    t.boolean "submitted", default: false, null: false
+    t.integer "total", default: 0, null: false
     t.integer "discount"
     t.string "discount_type"
-    t.string "invoice", null: false
+    t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["accepted_by_id"], name: "index_orders_on_accepted_by_id"
+    t.index ["placed_by_id"], name: "index_orders_on_placed_by_id"
     t.index ["purchaser_id"], name: "index_orders_on_purchaser_id"
+    t.index ["supplier_id", "invoice_no"], name: "index_orders_on_supplier_id_and_invoice_no", unique: true
     t.index ["supplier_id"], name: "index_orders_on_supplier_id"
-    t.index [nil, "invoice"], name: "index_orders_on_supplier_and_invoice", unique: true
   end
 
   create_table "supply_links", force: :cascade do |t|
@@ -83,20 +113,8 @@ ActiveRecord::Schema.define(version: 20170731061032) do
 
   create_table "users", force: :cascade do |t|
     t.string "name", null: false
-    t.string "email", null: false
-    t.string "encrypted_password", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip"
-    t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
 end

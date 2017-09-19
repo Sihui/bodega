@@ -1,0 +1,2 @@
+- if @user.requests_pending_self.any?
+  | #{pluralize(@user.requests_pending_self.count, "invitation")}

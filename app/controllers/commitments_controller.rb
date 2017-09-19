@@ -11,35 +11,16 @@ class CommitmentsController < ApplicationController
   def create
     @commitment = Commitment.new(commitment_params)
 
-    respond_to do |format|
-      if @commitment.save
-        format.html { redirect_to @company, notice: 'Commitment was successfully created.' }
-        format.json { render :show, status: :created, location: @commitment }
-      else
-        format.html { redirect_to @company, alert: 'Commitment failed to be created.' }
-        format.json { render json: @commitment.errors, status: :unprocessable_entity }
-      end
-    end
+    render status: @commitment.save ? :created : :unprocessable_entity
   end
 
   def update
-    respond_to do |format|
-      if @commitment.update_attributes(commitment_params)
-        format.html { redirect_to @company, notice: 'Commitment was successfully updated.' }
-        format.json { render :show, status: :created, location: @commitment }
-      else
-        format.html { render :new }
-        format.json { render json: @commitment.errors, status: :unprocessable_entity }
-      end
-    end
+    render status: \
+      @commitment.update(commitment_params) ? :ok : :unprocessable_entity
   end
 
   def destroy
-    @commitment.destroy
-    respond_to do |format|
-      format.html { redirect_to company_path(@company), notice: 'Commitment was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+    render status: @commitment.destroy ? :ok : :internal_server_error
   end
 
   private

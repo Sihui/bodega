@@ -1,0 +1,23 @@
+h1 Orders Report
+h2 Buyer: #{@supply_link.purchaser.name}
+h2 Vendor: #{@supply_link.supplier.name}
+h2 Period: (#{@range[:start]} – #{@range[:end]})
+
+- if @orders.any?
+  table
+    thead
+      tr
+        td Date
+        td Invoice number
+        td Total
+    tbody
+      - @orders.each do |o|
+        tr
+          td #{o.created_at.to_date}
+          td = link_to "#{o.invoice_no}", o
+          td #{o.total}元
+      tr
+        td colspan="2"
+        td: strong #{@total}元
+- else
+  p No orders found.

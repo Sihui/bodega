@@ -9,33 +9,33 @@ require 'rails_helper'
 #              DELETE /companies/:id(.:format)      companies#destroy
 #              PATCH  /companies/:id(.:format)      companies#update
 
-describe 'Companies Endpoints', type: :request do
-  let :co_name { Faker::Company.name }
+RSpec.describe 'Companies Endpoints', type: :request do
+  let :attributes { attributes_for(:company) }
 
   context 'with anonymous user' do
     it 'always redirects to sign-in page' do
       post companies_path
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       get new_company_path
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       get edit_company_path(acme)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       get company_path(acme)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       delete company_path(acme)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
 
       patch company_path(acme)
-      expect(response).to redirect_to(new_user_session_path)
+      expect(response).to redirect_to(new_account_session_path)
     end
   end
 
   context 'as Company admin' do
-    before(:each) { sign_in alice }
+    before(:each) { sign_in alice.account }
 
     it 'shows “Edit” form' do
       get edit_company_path(acme)
@@ -46,19 +46,19 @@ describe 'Companies Endpoints', type: :request do
     it 'deletes Company' do
       acme                    # create(:company)
       expect { delete company_path(acme) }.to change(Company, :count).by(-1)
-      expect(response).to redirect_to(user_registration_path)
+      expect(response).to redirect_to(account_registration_path)
     end
 
     it 'updates Company' do
-      patch company_path(acme), params: { company: { name: co_name } }
-      acme.reload             # reload object state from DB
-      expect(acme.name).to eq(co_name)
+      expect do
+        patch company_path(acme), params: { company: attributes }
+      end.to change { acme.reload.name }.to(attributes[:name])
       expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'as Company member' do
-    before(:each) { sign_in arthur }
+    before(:each) { sign_in arthur.account }
 
     it 'diverts from “Edit” form' do
       get edit_company_path(acme)
@@ -72,21 +72,23 @@ describe 'Companies Endpoints', type: :request do
     end
 
     it 'diverts from updates' do
-      patch company_path(acme), params: { company: { name: co_name } }
-      acme.reload             # reload object state from DB
-      expect(acme.name).not_to eq(co_name)
+      expect do
+        patch company_path(acme), params: { company: attributes }
+      end.not_to change { acme.reload.name }
       expect(response).to redirect_to(company_path(acme))
     end
   end
 
   context 'with unaffiliated user' do
-    before(:each) { sign_in zack }
+    before(:each) { sign_in zack.account }
 
     it 'creates Company' do
-      expect { post companies_path, params: { company: { name: co_name } } }
+      expect { post companies_path,
+               params: { company: attributes.slice(:name, :code) } }
         .to change(Company, :count).by(1)
-      expect(Company.find_by(name: co_name).admin?(zack)).to be(true)
-      expect(response).to redirect_to(company_path(Company.find_by(name: co_name)))
+      expect(Company.find_by(name: attributes[:name])).to eq(Company.last)
+      expect(Company.last.admin?(zack)).to be(true)
+      expect(response).to redirect_to(Company.last)
     end
 
     it 'shows “New” form' do
@@ -112,9 +114,9 @@ describe 'Companies Endpoints', type: :request do
     end
 
     it 'diverts from updates' do
-      patch company_path(acme), params: { company: { name: co_name } }
-      acme.reload             # reload object state from DB
-      expect(acme.name).not_to eq(co_name)
+      expect do
+        patch company_path(acme), params: { company: attributes }
+      end.not_to change { acme.reload.name }
       expect(response).to redirect_to(company_path(acme))
     end
   end

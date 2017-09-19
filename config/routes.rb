@@ -1,30 +1,51 @@
 Rails.application.routes.draw do
+  # Search ---------------------------------------------------------------------
+  resource :search, only: :create
+  namespace :companies do
+    resource :search, only: [:create, :show]
+  end
+
   # Main Resources -------------------------------------------------------------
-  resources :companies, except: [:index] do
-    resources :commitments, except: [:new, :edit, :show], shallow: true
-    resources :supply_links, only: [:create, :update, :destroy]
-    resources :items
+  resource :user, only: [:show, :update]
+  resources :companies, except: [:index, :new, :edit] do
+    resources :commitments, only: [:create, :update, :destroy], shallow: true
+    resources :supply_links, only: [:destroy], shallow: true
+    resources :purchasers, only: [:create, :update],
+                           controller: 'supply_links/purchasers'
+    resources :suppliers, only: [:create, :update],
+                          controller: 'supply_links/suppliers'
+    namespace :items do
+      resource :search, only: [:create]
+    end
+    resources :items, only: [:create, :update, :destroy]
+  end
+
+  resources :orders do
+    resources :line_items, only: [:create, :update, :destroy]
+  end
+
+  resources :supply_links, only: [], shallow: true do
+    resource :report, only: [:new, :show]
   end
 
   # Authentication -------------------------------------------------------------
-  devise_for :users, path: '', path_names: { registration: :users },
-                               skip: [:passwords, :registrations]
+  # See https://github.com/plataformatec/devise#configuring-routes
+  devise_for :accounts, path: '', skip: [:registrations]
 
-  as :user do
-    get    '/reset_password', to: 'devise/passwords#new',    as: :new_user_password
-    post   '/reset_password', to: 'devise/passwords#create', as: :user_password
-
-    get    '/sign_up',   to: 'devise/registrations#new',     as: :new_user_registration
-    get    '/user/edit', to: 'devise/registrations#edit',    as: :edit_user_registration
-    get    '/user',      to: 'devise/registrations#show',    as: :user_registration
-    patch  '/user',      to: 'devise/registrations#update',  as: ''
-    delete '/user',      to: 'devise/registrations#destroy', as: ''
-    post   '/user',      to: 'devise/registrations#create',  as: ''
+  devise_scope :account do
+    get    '/join',    to: 'devise/registrations#new',     as: :new_account_registration
+    post   '/account', to: 'devise/registrations#create',  as: :account_registration
+    patch  '/account', to: 'devise/registrations#update',  as: ''
+    put    '/account', to: 'devise/registrations#update',  as: ''
+    delete '/account', to: 'devise/registrations#destroy', as: ''
   end
 
+  get '/account', to: redirect('/join')
+
   # Static pages ---------------------------------------------------------------
+  root 'dashboards#show'
+
   HighVoltage.configure do |config|
     config.route_drawer = HighVoltage::RouteDrawers::Root
-    config.home_page    = 'home'
   end
 end

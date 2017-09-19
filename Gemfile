@@ -25,6 +25,11 @@ gem 'uglifier', '>= 1.3.0'
 # Use Devise for authentication
 gem 'devise', '~> 4.3'
 
+# Use jquery-rails
+gem 'jquery-rails', '~> 4.3'
+gem 'jquery-ui-rails', '~> 6.0'
+# Use gon to pass data from Rails to JS
+gem 'gon', '~> 6.1'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -40,6 +45,7 @@ gem 'bcrypt', '~> 3.1.7'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
+  gem 'faker', '~> 1.8'
   gem 'rspec-rails', '~> 3.6'
   gem 'factory_girl_rails', '~> 4.8'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -62,9 +68,8 @@ end
 
 group :test do
   gem 'guard-rspec', '~> 4.7'
-  gem 'faker', '~> 1.8'
   gem 'launchy', '~> 2.4'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

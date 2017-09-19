@@ -1,0 +1,27 @@
+- our_role = (%i(purchaser supplier) - [their_role]).first
+
+- if @company.send("requests_from_#{their_role}s").any?
+  div[id="#{their_role}s_pending_us"]
+    p[id="#{their_role}_request_count"]
+      = render partial: "companies/supply_links_request_count", locals: { their_role: their_role }
+    - if current_user.is_admin?(@company)
+      - @company.send("requests_from_#{their_role}s").map(&their_role).each do |them|
+        div[class="#{their_role}_request_form"]
+          p #{them.name}
+          = button_to("Accept",
+                      send("company_#{their_role}_path",
+                        @company, SupplyLink.for(our_role => @company, their_role => them)),
+                      method: :patch,
+                      remote: true,
+                      params: { supply_link: { "pending_#{our_role}_conf" => false } })
+          = button_to("Reject",
+                      send("company_#{their_role}_path",
+                        @company, SupplyLink.for(our_role => @company, their_role => them)),
+                      method: :delete,
+                      remote: true)
+- if @company.send("requests_to_#{their_role}s").any?
+  div[id="#{their_role}s_pending_their_role"]
+    p
+      ' #{pluralize(@company.send("requests_to_#{their_role}s").count, "request")}
+      ' awaiting #{their_role} confirmation
+      ' (#{@company.send("requests_to_#{their_role}s").map(&their_role).map(&:name).join(", ")})

@@ -3,12 +3,16 @@ html
   head
     title Bodega
     = csrf_meta_tags
+    = include_gon
 
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-
-  body
+    = stylesheet_link_tag    "application", "data-turbolinks-track": "reload", media: "all"
+    = javascript_include_tag 'application', "data-turbolinks-track": "reload"
+  body data-controller=controller_path data-action=action_name
+    #flash
+      = render "shared/flash"
     header
-      - flash.each do |type, msg|
-         p[class=type] #{msg}
-    = yield
+      = render "shared/nav"
+    #content
+      = yield
+    footer
+      = render "shared/footer"
