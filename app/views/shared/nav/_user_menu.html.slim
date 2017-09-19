@@ -1,0 +1,13 @@
+#nav__user_badge
+  = current_user.name[0].upcase
+ul#nav__user_menu
+  li = link_to "Home", root_path
+  - if current_user.confirmed_companies.any?
+    hr
+    li
+      strong Your Companies
+      ul#nav__user_companies
+        = render partial: "companies/li", collection: current_user.confirmed_companies, as: :company
+    hr
+  / li Settings
+  li = link_to "Sign Out", destroy_account_session_path, method: :delete

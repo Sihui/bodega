@@ -21,17 +21,18 @@
 
 $(document).on('turbolinks:load', function(e) {
   // global --------------------------------------------------------------------
+  BODEGA.flash.fadeOut();
+
   new BODEGA.HiddenForm('#nav__companies', { search: { model: 'Company' } });
 
   $('#nav__user_menu').addClass('hidden');
-  $('#nav__user').click(function(e) {
-    e.stopPropagation();
-  });
   $('#nav__user_badge').click(function() {
     $('#nav__user_menu').toggleClass('hidden');
   });
-  $('body').click(function() {
-    $('#nav__user_menu').addClass('hidden');
+  $('html').click(function(e) {
+    if ($('#nav__user').find(e.target).length == 0) {
+      $('#nav__user_menu').addClass('hidden');
+    }
   });
 
   // users#show ----------------------------------------------------------------
@@ -41,6 +42,8 @@ $(document).on('turbolinks:load', function(e) {
     new BODEGA.HiddenForm('#company_overview');
 
     new BODEGA.ButtonTo('#pending_commitment_summary');
+
+    new BODEGA.Subnav();
   }
 
   // companies#show ------------------------------------------------------------
@@ -82,6 +85,7 @@ $(document).on('turbolinks:load', function(e) {
     new BODEGA.ButtonTo('#join_company');
     new BODEGA.ButtonTo('#suppliers_pending_us, #purchasers_pending_us');
     new BODEGA.ButtonTo('.membership_request_form');
+    new BODEGA.Subnav();
   }
 
   // orders#new ----------------------------------------------------------------
@@ -98,41 +102,53 @@ $(document).on('turbolinks:load', function(e) {
     order_form.addClass('hidden');
 
     purchaser_select.children('.purchaser').each(function(i, el) {
-      purchaser = $(el);
-      suppliers = purchaser.data().suppliers.split(',');
+      var purchaser = $(el),
+          supplier_ids = purchaser.data().suppliers.split(','),
+          suppliers = supplier_select.children('.supplier').filter(function(i) {
+        return (supplier_ids.indexOf($(this).data().id.toString(10)) >= 0);
+      });
 
       purchaser.hover(function(e) {
+        if ($(this).hasClass('selected')) {
+          return;
+        }
+
         // highlight self
         $(this).addClass('highlight');
 
         // highlight valid suppliers
-        supplier_select.children('.supplier').filter(function(i) {
-          return (suppliers.indexOf($(this).data().id.toString(10)) >= 0);
-        }).addClass('highlight');
+        suppliers.addClass('highlight');
 
       }, function(e) {
         // undo
         $(this).removeClass('highlight');
-        supplier_select.children().removeClass('highlight');
+        suppliers.removeClass('highlight');
       });
 
       purchaser.click(function(e) {
-        // mark this selected
-        purchaser_select.children().removeClass('selected');
-        $(this).addClass('selected');
+        if ($(this).hasClass('selected')) {
+          $(this).removeClass('selected');
 
-        // hide invalid suppliers 
-        supplier_select.children('.supplier').filter(function(i) {
-          return (suppliers.indexOf($(this).data().id.toString(10)) >= 0);
-        }).removeClass('hidden');
+          // unhide all suppliers 
+          supplier_select.children('.supplier').removeClass('hidden');
+        } else {
+          // mark this selected
+          purchaser_select.children().removeClass('selected');
+          $(this).addClass('selected');
 
-        // unhide valid suppliers 
-        supplier_select.children('.supplier').filter(function(i) {
-          return (suppliers.indexOf($(this).data().id.toString(10)) < 0);
-        }).addClass('hidden');
+          // unhide valid suppliers 
+          supplier_select.children('.supplier').filter(function(i) {
+            return (supplier_ids.indexOf($(this).data().id.toString(10)) >= 0);
+          }).removeClass('hidden');
 
-        // set purchaser
-        order_params.purchaser = $(this).data().id;
+          // hide invalid suppliers 
+          supplier_select.children('.supplier').filter(function(i) {
+            return (supplier_ids.indexOf($(this).data().id.toString(10)) < 0);
+          }).addClass('hidden');
+
+          // set purchaser
+          order_params.purchaser = $(this).data().id;
+        }
       });
     });
 
@@ -348,6 +364,7 @@ $(document).on('turbolinks:load', function(e) {
 
       // toggle visiblity on selection ui, order form
       company_select.removeClass('hidden');
+      company_select.children().children().removeClass('selected');
       order_form.addClass('hidden');
 
       // purge `order_params`
@@ -365,11 +382,11 @@ $(document).on('turbolinks:load', function(e) {
     });
 
     if ($('.purchaser').length < 2) {
-      $('.purchaser > a').trigger('click');
+      $('.purchaser').trigger('click');
     }
 
     if ($('.supplier').length < 2) {
-      $('.supplier > a').trigger('click');
+      $('.supplier').trigger('click');
     }
   }
 });

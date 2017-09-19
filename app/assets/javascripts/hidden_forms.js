@@ -72,6 +72,7 @@ BODEGA.HiddenForm.prototype = {
       that.showBtn.addClass('hidden');
       that.form.removeClass('hidden');
       that.rendered.addClass(that.showBtn.text().match(/^edit/i) ? 'hidden' : '');
+      that.form.find('input[type="text"]').first().focus();
     });
 
     // “Cancel” Button

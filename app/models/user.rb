@@ -66,4 +66,9 @@ class User < ApplicationRecord
   def suppliers
     companies.map(&:suppliers).flatten.uniq
   end
+
+  def recent_orders(count = 5)
+    Order.where('placed_by_id = ? AND submitted = ?', id, true)
+         .order('created_at desc').limit(count)
+  end
 end

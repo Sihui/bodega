@@ -7,12 +7,12 @@ html
 
     = stylesheet_link_tag    "application", "data-turbolinks-track": "reload", media: "all"
     = javascript_include_tag 'application', "data-turbolinks-track": "reload"
-  body[data-controller=controller_path data-action=action_name]
-    header
-      nav
-        = render "shared/nav"
+  body data-controller=controller_path data-action=action_name
     #flash
-      - flash.each do |type, msg|
-        p[id="#{type}"] #{msg}
+      = render "shared/flash"
+    header
+      = render "shared/nav"
     #content
       = yield
+    footer
+      = render "shared/footer"

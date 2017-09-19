@@ -1,8 +1,8 @@
-- @item ||= Item.new
-- @company ||= @item.company
+- item ||= (@item || Item.new)
+- company ||= (@company || item.supplier)
 
 button #{action}
-= form_with model: [@company, @item] do |f|
+= form_with model: [company, item] do |f|
   .field
     = f.label 'Item Name'
     = f.text_field :name

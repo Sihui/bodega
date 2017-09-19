@@ -1,10 +1,12 @@
+- if @user.commitments.map(&:pending?).any?
+  h2 Pending Memberships
 #company_request_index
   - if @user.requests_pending_self.any?
     p#company_request_count
       = render "users/company_request_count"
     - @user.requests_pending_self.map(&:company).each do |c|
       .company_request_form
-        p #{c.name}
+        p = link_to c.name, c
         = button_to("Accept",
                     commitment_path(Commitment.between(c, @user)),
                     method: :patch,

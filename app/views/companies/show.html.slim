@@ -1,24 +1,39 @@
-#company_overview[data-resource="company"]
-  = render "overview"
+.flex_wrapper
+  aside#sidebar
+    section#company_overview[data-resource="company"]
+      = render "overview"
 
-#join_company
-  = render "join_button"
+      #join_company
+        = render "join_button"
 
-/ Inventory --------------------------------------------------------------------
-- if current_user.is_purchaser?(@company) || current_user.belongs_to?(@company)
-  #inventory_overview[data-resource="item"]
-    = render "item_overview"
+  main
+    #subnav
+      a Inventory
+      a Vendors & Customers
+      a Members
+      div
 
-/ Supply Links -----------------------------------------------------------------
-- if current_user.belongs_to?(@company)
-  #supply_link_index
-    #purchasers_overview
-      = render partial: "companies/supply_links_overview", locals: { role: :purchaser }
+    / Inventory ------------------------------------------------------------------
+    section#inventory_overview[data-resource="item"]
+      - if current_user.is_purchaser?(@company) || current_user.belongs_to?(@company)
+        = render "item_overview"
+      - else
+        p You are not authorized to view this company's inventory.
 
-    #suppliers_overview
-      = render partial: "companies/supply_links_overview", locals: { role: :supplier }
+    / Supply Links ---------------------------------------------------------------
+    section#supply_link_index
+      - if current_user.belongs_to?(@company)
+        #purchasers_overview
+          = render partial: "companies/supply_links_overview", locals: { role: :purchaser }
 
-/ Members ----------------------------------------------------------------------
-- if current_user.is_admin?(@company)
-  #members_overview
-    = render "member_overview"
+        #suppliers_overview
+          = render partial: "companies/supply_links_overview", locals: { role: :supplier }
+      - else
+        p You are not authorized to view this company's vendors & customers.
+
+    / Memberships ----------------------------------------------------------------
+    section#members_overview
+      - if current_user.is_admin?(@company)
+        = render "member_overview"
+      - else
+        p You are not authorized to view this company's members.

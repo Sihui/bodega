@@ -1,24 +1,12 @@
-a#nav__home[href=root_path] Bodega
+nav
+  a#nav__home[href="#{root_path}"] Bodega
 
-- if user_signed_in?
-  #nav__companies
-    = render "companies/searches/form"
+  - if user_signed_in?
+    #nav__companies
+      = render "shared/nav/company_search"
 
-#nav__user
-  #nav__user_badge
-    = current_user.name[0].upcase
-  ul#nav__user_menu
+  #nav__user
     - if user_signed_in?
-      li = link_to "Home", root_path
-      hr
-      - if current_user.confirmed_companies.any?
-        li
-          strong Your Companies
-          ul#nav__companies
-            = render partial: "companies/li", collection: current_user.confirmed_companies, as: :company
-      hr
-      li Settings
-      li = link_to "Sign Out", destroy_account_session_path, method: :delete
+      = render "shared/nav/user_menu"
     - else
-      li = link_to "Sign Up", new_account_registration_path
-      li = link_to "Sign In", new_account_session_path
+      = render "shared/nav/user_auth"

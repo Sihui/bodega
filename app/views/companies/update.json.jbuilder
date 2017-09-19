@@ -4,7 +4,7 @@ if @company.changes.none?
                    with: render(partial: 'details',
                                 object: @company,
                                 as: :company) },
-                 { replace: "$('#nav__companies')",
+                 { replace: "$('#nav__user_companies')",
                    with: render(partial: 'companies/li',
                                 collection: current_user.confirmed_companies,
                                 as: :company) }])

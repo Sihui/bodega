@@ -1,5 +1,5 @@
-- @order ||= order
-= form_with model: @order, id: :order_details, method: :patch, local: true do |f|
+- order ||= @order
+= form_with model: order, id: :order_details, method: :patch, local: true do |f|
   = f.hidden_field :submitted, value: true
   = hidden_field_tag :update_action, "creation"
   h2 Your Cart
@@ -19,7 +19,7 @@
           td.item_total #{ff.object.line_total}元
       tr
         td[colspan="3"]
-        td#total: strong #{@order.total}元
+        td#total: strong #{order.total}元
 
   .field
     = f.label :notes

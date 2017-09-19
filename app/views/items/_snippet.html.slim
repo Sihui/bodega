@@ -1,8 +1,6 @@
-- @item ||= item
-
 .item_snippet[data-resource="item"]
   .item_details.form_rendered
-    = render partial: "items/details"
+    = render partial: "items/details", object: item, as: :item
   - if current_user.belongs_to?(item.supplier)
     .edit_item.form_container
-      = render partial: "items/form", locals: { action: "Edit" }
+      = render partial: "items/form", locals: { item: item, action: "Edit" }
