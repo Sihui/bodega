@@ -10,10 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170817071646) do
+ActiveRecord::Schema.define(version: 20170731100456) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.string "email", null: false
     t.string "encrypted_password", null: false
     t.string "reset_password_token"
@@ -32,8 +35,8 @@ ActiveRecord::Schema.define(version: 20170817071646) do
   end
 
   create_table "commitments", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "company_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "company_id", null: false
     t.boolean "admin", default: false, null: false
     t.boolean "pending_admin_conf", default: true, null: false
     t.boolean "pending_member_conf", default: true, null: false
@@ -60,7 +63,7 @@ ActiveRecord::Schema.define(version: 20170817071646) do
     t.string "ref_code"
     t.integer "price", null: false
     t.string "unit_size", null: false
-    t.integer "supplier_id", null: false
+    t.bigint "supplier_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name", "supplier_id"], name: "index_items_on_name_and_supplier_id", unique: true
@@ -69,8 +72,8 @@ ActiveRecord::Schema.define(version: 20170817071646) do
   end
 
   create_table "line_items", force: :cascade do |t|
-    t.integer "order_id", null: false
-    t.integer "item_id", null: false
+    t.bigint "order_id", null: false
+    t.bigint "item_id", null: false
     t.integer "qty", default: 1, null: false
     t.integer "price", null: false
     t.integer "line_total", null: false
@@ -83,10 +86,10 @@ ActiveRecord::Schema.define(version: 20170817071646) do
   end
 
   create_table "orders", force: :cascade do |t|
-    t.integer "supplier_id", null: false
-    t.integer "purchaser_id", null: false
-    t.integer "placed_by_id", null: false
-    t.integer "accepted_by_id"
+    t.bigint "supplier_id", null: false
+    t.bigint "purchaser_id", null: false
+    t.bigint "placed_by_id", null: false
+    t.bigint "accepted_by_id"
     t.string "invoice_no"
     t.boolean "submitted", default: false, null: false
     t.integer "total", default: 0, null: false
@@ -103,8 +106,8 @@ ActiveRecord::Schema.define(version: 20170817071646) do
   end
 
   create_table "supply_links", force: :cascade do |t|
-    t.integer "supplier_id", null: false
-    t.integer "purchaser_id", null: false
+    t.bigint "supplier_id", null: false
+    t.bigint "purchaser_id", null: false
     t.boolean "pending_supplier_conf", default: true, null: false
     t.boolean "pending_purchaser_conf", default: true, null: false
     t.index ["purchaser_id"], name: "index_supply_links_on_purchaser_id"
@@ -117,4 +120,16 @@ ActiveRecord::Schema.define(version: 20170817071646) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "accounts", "users"
+  add_foreign_key "commitments", "companies"
+  add_foreign_key "commitments", "users"
+  add_foreign_key "items", "companies", column: "supplier_id"
+  add_foreign_key "line_items", "items"
+  add_foreign_key "line_items", "orders"
+  add_foreign_key "orders", "companies", column: "purchaser_id"
+  add_foreign_key "orders", "companies", column: "supplier_id"
+  add_foreign_key "orders", "users", column: "accepted_by_id"
+  add_foreign_key "orders", "users", column: "placed_by_id"
+  add_foreign_key "supply_links", "companies", column: "purchaser_id"
+  add_foreign_key "supply_links", "companies", column: "supplier_id"
 end
