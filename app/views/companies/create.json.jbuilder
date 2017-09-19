@@ -8,7 +8,7 @@ if @company.persisted?
                    { append: render(partial: 'companies/li',
                                     object: @company,
                                     as: :company),
-                     to: "$('#nav__companies')" }])
+                     to: "$('#nav__user_companies')" }])
   else
     json.rerender([{ append: render(partial: 'companies/snippet',
                                     object: @company,
@@ -17,7 +17,7 @@ if @company.persisted?
                    { append: render(partial: 'companies/li',
                                     object: @company,
                                     as: :company),
-                     to: "$('#nav__companies')" }])
+                     to: "$('#nav__user_companies')" }])
   end
 else
   name = @company.name.blank? ? "Company" : @company.name

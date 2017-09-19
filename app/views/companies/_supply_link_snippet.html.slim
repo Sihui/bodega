@@ -1,0 +1,7 @@
+- our_role = (%i(purchaser supplier) - [their_role]).first
+
+= render partial: "companies/snippet", object: them, as: :company
+= button_to("View Report",
+            new_supply_link_report_path(SupplyLink.for(their_role => them,
+                                                       our_role => @company)),
+            method: :get)

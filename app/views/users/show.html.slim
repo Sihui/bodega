@@ -1,5 +1,40 @@
-#user_overview[data-resource="user"]
-  = render "overview"
+.flex_wrapper
+  aside#sidebar
+    section#user_overview[data-resource="user"]
+      = render partial: "users/overview"
 
-#company_overview[data-resource="company"]
-  = render "company_overview"
+  main
+    #subnav
+      a Orders
+      a Companies
+      div
+
+    section#orders_overview
+      - if current_user.suppliers.any?
+        = link_to "New order", new_order_path
+
+      h2 Recent Orders
+      - if (orders = current_user.recent_orders).any?
+        - orders.each do |o|
+          a.recent_order[href=url_for(o)]
+            .recent_order__header
+              .recent_order__date #{o.created_at.strftime("%Y/%m/%d")}
+              .recent_order__parties
+                ' #{o.purchaser.name} » #{o.supplier.name}
+            .recent_order__body
+              .recent_order__items
+                ul
+                  - o.line_items.limit(5).each do |li|
+                    li #{li.qty} x #{li.item.name}
+                  - if o.line_items.count > 5
+                    li #{o.line_items.count - 5} more...
+              .recent_order__total
+                ' Total: 
+                strong #{o.total}元
+      - else
+        p You have no recent orders.
+
+    section#company_overview[data-resource="company"]
+      #pending_commitment_summary
+        = render "users/pending_commitment_summary"
+      = render partial: "users/company_overview"

@@ -25,7 +25,7 @@ Account.create(email:           "homer.simpson@gmail.com",
 
 # Companies & Commitments ------------------------------------------------------
 User.first.create_company(name: "Snakehole Lounge", code: "SNK", city: "Pawnee")
-User.second.create_company(name: "Bob's Burgers", code: "BOB", city: "North Park")
+User.second.create_company(name: "Bob's Burgers", code: "BOB", city: "Longport")
 User.third.create_company(name: "Paddy's Pub", code: "PDY", city: "Philadelphia")
 User.fourth.create_company(name: "Krusty Burger", code: "KRST", city: "Springfield")
 

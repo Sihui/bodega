@@ -17,4 +17,14 @@ when Item
     json.value(item.name)
     json.id(item.id)
   end
+when Order
+  json.array!(@search[:results]) do |order|
+    json.label("#{order.invoice_no} (#{order.created_at})")
+    json.value(order.invoice_no)
+    json.id(order.id)
+    json.size(order.line_items.count)
+    json.age(time_ago_in_words(order.created_at))
+    json.supplier(order.supplier.name)
+    json.purchaser(order.purchaser.name)
+  end
 end
