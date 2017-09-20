@@ -11,7 +11,7 @@ if @supply_link.persisted?
   else
     notice   = "Your request has been submitted."
     rerender = { replace: "$('#pending_#{their_role}_summary')",
-                 with: render(partial: "supply_links/pending_summary",
+                 with: render(partial: "companies/supply_links_pending",
                               locals: { their_role: their_role }) }
   end
   json.flash({ notice: notice })
