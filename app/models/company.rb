@@ -22,7 +22,7 @@ class Company < ApplicationRecord
     params = { query: "%#{query}%" }
 
     if (filters.keys & %w(of as)).length == 2
-      sql << "(id IS NOT :us) AND (id NOT IN (:them))"
+      sql << "(id <> :us) AND (id NOT IN (:them))"
 
       us = find_by(name: filters["of"])
       case filters["as"]
