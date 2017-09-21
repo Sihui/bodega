@@ -20,7 +20,7 @@
                       method: :delete,
                       remote: true)
 - if @company.send("requests_to_#{their_role}s").any?
-  div[id="#{their_role}s_pending_their_role"]
+  div[id="#{their_role}s_pending_them"]
     p
       ' #{pluralize(@company.send("requests_to_#{their_role}s").count, "request")}
       ' awaiting #{their_role} confirmation
