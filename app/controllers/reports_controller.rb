@@ -41,7 +41,7 @@ class ReportsController < ApplicationController
       sql = []
       sql_params = {}
 
-      sql << "accepted_by_id NOT NULL"
+      sql << "accepted_by_id <> NULL"
 
       sql << "supplier_id = :supplier_id"
       sql_params[:supplier_id] = @supply_link.supplier.id
