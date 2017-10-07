@@ -85,6 +85,7 @@ $(document).on('turbolinks:load', function(e) {
     new BODEGA.ButtonTo('#join_company');
     new BODEGA.ButtonTo('#suppliers_pending_us, #purchasers_pending_us');
     new BODEGA.ButtonTo('.membership_request_form');
+    new BODEGA.ButtonTo('.member');
     new BODEGA.Subnav();
   }
 

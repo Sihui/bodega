@@ -2,6 +2,7 @@ button Add
 = form_with url: company_commitments_path(@company),
             scope: :commitment,
             class: 'ui-front' do |f|
+  = f.check_box   :admin          
   = f.text_field :name, class: 'ui-autocomplete-input'
   = f.hidden_field :user_id
   = f.hidden_field :pending_admin_conf, value: false

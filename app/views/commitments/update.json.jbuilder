@@ -2,13 +2,11 @@
 @user ||= @commitment.user
 
 if @commitment.changes.none?
-  json.flash({ notice: "#{@commitment.user.name} is now a member of #{@commitment.company.name}." })
+  json.flash({ notice: "#{@commitment.user.name} is now #{@commitment.admin? ? "an admin" : "a member"} of #{@commitment.company.name}." })
   json.rerender([{ replace: "$('#membership_request_count')",
                    with: render("companies/membership_request_count") },
-                 { append: render(partial: "companies/member_snippet",
-                                  object: @user,
-                                  as: :member),
-                   to: "$('#member_index')" },
+                 { replace: "$('#members_overview')",
+                   with: render("companies/member_overview")},
                  { remove: "$(\".membership_request_form > " \
                            "form[action$='/#{@commitment.id}']\").parent()" },
                  { replace: "$('#company_request_count')",

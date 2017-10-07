@@ -1,2 +1,10 @@
 .member_snippet
-  li.member #{member.name} (#{member.is_admin?(@company) ? 'admin' : 'member'})
+  li.member[id="member-#{member.id}"]
+    | #{member.name} (#{member.is_admin?(@company) ? 'admin' : 'member'})
+    - if current_user.is_admin?(@company) && !member.is_admin?(@company)
+      = button_to("Make Admin",
+                  commitment_path(Commitment.between(@company, member)),
+                  method: :patch,
+                  remote: true,
+                  params: { commitment: { admin: true } })
+    
